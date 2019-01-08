@@ -11,7 +11,7 @@ class MyRobot extends BCAbstractRobot {
             // this.log("Crusader health: " + this.me.health);
             const choices = [[0,-1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]];
             const choice = choices[Math.floor(Math.random()*choices.length)]
-            return this.move(...choice);
+                return this.move(...choice);
         }
 
         else if (this.me.unit === SPECS.CASTLE) {
@@ -22,7 +22,6 @@ class MyRobot extends BCAbstractRobot {
                 return // this.log("Castle health: " + this.me.health);
             }
         }
-
     }
 }
 

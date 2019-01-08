@@ -8,7 +8,11 @@ __pragma__('tconv')
 
 # don't try to use global variables!!
 class MyRobot(BCAbstractRobot):
-    step = -1
+    def __init__(self):
+        super().__init__()
+        if self.me['unit'] == SPECS['CASTLE']:
+            self.me_irl = Castle()
+        self.step = -1
 
     def turn(self):
         self.step += 1
@@ -22,11 +26,37 @@ class MyRobot(BCAbstractRobot):
             return self.move(*choice)
 
         elif self.me['unit'] == SPECS['CASTLE']:
+            act = self.me_irl.takeTurn()
+            if act:
+                return act
+            '''
             if self.step < 10:
                 self.log("Building a crusader at " + str(self.me['x']+1) + ", " + str(self.me['y']+1))
                 return self.build_unit(SPECS['CRUSADER'], 1, 1)
-
             else:
                 self.log("Castle health: " + self.me['health'])
+                '''
 
 robot = MyRobot()
+
+class Castle(MyRobot):
+    def takeTurn(self):
+        if self.step < 10:
+            self.log("Building a crusader at " + str(self.me['x']+1) + ", " + str(self.me['y']+1))
+            return self.build_unit(SPECS['CRUSADER'], 1, 1)
+        else:
+            self.log("Castle health: " + self.me['health'])
+
+
+
+'''
+class Castle:
+    @staticmethod
+    def takeTurn(robot):
+        r = robot.me
+        if robot.step < 10:
+            robot.log("Building a crusader at " + str(r['x']+1) + ", " + str(r['y']+1))
+            return robot.build_unit(SPECS['CRUSADER'], 1, 1)
+        else:
+            robot.log("Castle health: " + r['health'])
+'''
