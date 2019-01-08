@@ -1,5 +1,5 @@
-import {Unit} from 'unit.js';
+import {Robot} from 'myrobot.js';
 import {SPECS} from 'battlecode'; 
 import * as params from 'params.js';
-export class Structure extends Unit{
+export class CombatUnit extends Robot{
 }
