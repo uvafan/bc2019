@@ -5,6 +5,7 @@ import * as params from 'params.js';
 export class Castle extends Structure{
     turn(rc){
         super.turn(rc);
+        this.processCastleTalk();
         var ret=null;
         if (this.rc.karbonite>=SPECS.UNITS[SPECS.CRUSADER].CONSTRUCTION_KARBONITE && 
             this.rc.fuel>=SPECS.UNITS[SPECS.CRUSADER].CONSTRUCTION_FUEL) {
@@ -18,5 +19,18 @@ export class Castle extends Structure{
             });
         } 
         return ret;
+    }
+
+    processCastleTalk(){
+        this.unitCounts = [0,0,0,0,0,0];
+        var visRobots = this.rc.getVisibleRobots();
+        var th=this;
+        visRobots.forEach(function(r){
+            if(r.castle_talk != null && r.castle_talk>0 && (r.team==null || r.team==th.me.team)){
+                //th.log(r.id+' '+r.castle_talk);
+                th.unitCounts[r.castle_talk-1]++;
+            }
+        });
+        //this.log(this.me.turn+' '+this.unitCounts);
     }
 }

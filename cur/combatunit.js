@@ -29,7 +29,7 @@ export class CombatUnit extends Robot{
         var ret = null;
         var bestScore = Number.MIN_SAFE_INTEGER;
         visRobots.forEach(function(r){
-            if(r.team==null || r.team==th.me.team)
+            if(r.x == null || r.team==null || r.team==th.me.team)
                 return;
             var distToR = th.distBtwn(th.me,r);
             if(th.attackRadius[0]>distToR||th.attackRadius[1]<distToR)

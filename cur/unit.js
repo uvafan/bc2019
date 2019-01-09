@@ -2,7 +2,6 @@ import * as params from 'params.js';
 import {SPECS} from 'battlecode'; 
 export class Unit{
     constructor(rc){
-        this.step= -1;
         this.mapSize= rc.map.length;
         this.rc= rc;
         this.me= rc.me;
@@ -11,14 +10,18 @@ export class Unit{
     }
 
     updateInfo(rc){
-        this.step++;
         this.rc = rc;
         this.me = rc.me;
         this.visRobotMap = this.rc.getVisibleRobotMap();
     }
 
+    sendCastleTalk(){
+        this.rc.castleTalk(this.me.unit+1);
+    }
+
     turn(rc){
         this.updateInfo(rc);
+        this.sendCastleTalk();
     } 
     //0 is horiz, 1 is vert
     determineSymmetry(){
