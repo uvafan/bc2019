@@ -8,7 +8,7 @@ export class CombatUnit extends Robot{
     }
 
     determineFirstTarget(){
-        this.target = this.reflect(this.r.y,this.r.x);
+        this.target = this.reflect(this.me.x,this.me.y);
     }
 
     updateTarget(){

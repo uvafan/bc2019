@@ -7,7 +7,7 @@ export class Castle extends Structure{
         super.turn(rc);
         if (this.rc.karbonite>SPECS.UNITS[SPECS.CRUSADER].CONSTRUCTION_KARBONITE && 
             this.rc.fuel>SPECS.UNITS[SPECS.CRUSADER].CONSTRUCTION_FUEL) {
-            this.rc.log("Building a crusader at " + (this.r.x+1) + ", " + (this.r.y+1));
+            this.rc.log("Building a crusader at " + (this.me.x+1) + ", " + (this.me.y+1));
             return this.rc.buildUnit(SPECS.CRUSADER, 1, 1);
         } 
         else {

@@ -5,13 +5,13 @@ export class Unit{
         this.step= -1;
         this.mapSize= rc.map.length;
         this.rc= rc;
-        this.r= rc.me;
+        this.me= rc.me;
     }
 
     updateInfo(rc){
         this.step++;
         this.rc = rc;
-        this.r = rc.me;
+        this.me = rc.me;
     }
 
     turn(rc){
@@ -33,16 +33,19 @@ export class Unit{
         this.rc.log(s);
     }
 
-    reflect(y,x){
+    reflect(x,y){
         if(!this.symmetry)
             this.symmetry = this.determineSymmetry();
-        this.log(String(this.symmetry));
         if(this.symmetry==1){
-            return [y,this.mapSize-x-1];
+            return [this.mapSize-x-1,y];
         }
         else{
-            return [this.mapSize-y-1,x];
+            return [x,this.mapSize-y-1];
         }
+    }
+    
+    offMap(x,y){
+        return x<0||x>=this.mapSize||y<0||y>=this.mapSize;
     }
 
 }

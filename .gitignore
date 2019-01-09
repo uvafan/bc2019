@@ -1,3 +1,5 @@
 *.bc19
 compiled_bot*.js
 *.swp
+*.txt
+*.out
