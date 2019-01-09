@@ -12,6 +12,7 @@ export class Unit{
         this.step++;
         this.rc = rc;
         this.me = rc.me;
+        this.visRobotMap = this.rc.getVisibleRobotMap();
     }
 
     turn(rc){
@@ -46,6 +47,16 @@ export class Unit{
     
     offMap(x,y){
         return x<0||x>=this.mapSize||y<0||y>=this.mapSize;
+    }
+
+    //on map and is passable
+    isPassable(x,y){
+        return !this.offMap(x,y) && this.rc.map[y][x];
+    }
+
+    //can walk there on this turn
+    isWalkable(x,y){
+        return this.isPassable(x,y) && this.visRobotMap[y][x]<=0;
     }
 
 }

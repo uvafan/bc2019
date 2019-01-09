@@ -4,6 +4,7 @@ import * as params from 'params.js';
 
 export class Crusader extends CombatUnit{
     turn(rc){
-        return this.navTo(this.target,1);
+        super.turn(rc);
+        return this.navTo(this.target,[10,1]);
     }
 }

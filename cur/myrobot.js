@@ -31,39 +31,37 @@ export class Robot extends Unit{
         return ret;
     }
 
-    //urgency = 1 if urgent (prioritize movement), 0 if not (priotize fuel efficiency)
-    navTo(target,urgency){
+    //weights: how much to weight turns saved vs. fuel efficiency
+    navTo(target,weights){
         var best = [];
         for(var x=0;x<this.mapSize;x++){
             best.push([]);
             for(var y=0;y<this.mapSize;y++){
-                best[x].push([Number.MAX_SAFE_INTEGER,Number.MAX_SAFE_INTEGER]);
+                best[x].push(Number.MAX_SAFE_INTEGER);
             }
         }
         var q = [];
         //x,y,turns,fuel
-        q.push([target[0],target[1],0,0]);
+        q.push([target[0],target[1]]);
+        best[target[0]][target[1]]=0;
         var th = this;
-        //var count=0;
+        var count=0;
+        var adjMoves = [[-1,0],[1,0],[0,-1],[0,1]];
         while(q.length>0){
-            //count++;
-            //if(count==1000)
-            //    break;
+            /*count++;
+            if(count==1000)
+                break;*/
             var u = q.shift();
             var x = u[0];
             var y = u[1];
-            if(urgency==1&&u[2]>=best[x][y][0] || urgency==0&&u[3]>=best[x][y][1]){
-                continue;
-            }
-            //this.log('x '+x+' y '+y + ' t '+ u[2] + ' f ' + u[3] + ' b0 ' + best[x][y][0] + ' b1 '+best[x][y][1] + ' urgency '+urgency);
-            best[x][y] = [u[2],u[3]];
-            this.possibleMoves.forEach(function(move){
+            //this.log('x '+x+' y '+y + ' b0 ' + best[x][y]);
+            adjMoves.forEach(function(move){
                 var nx = x+move[0];
                 var ny = y+move[1];
-                if(th.offMap(nx,ny) || !th.rc.map[ny][nx])
+                if(!th.isPassable(nx,ny)||best[nx][ny]<=best[x][y]+1)
                     return;
-                var fuelUsed = (move[0]*move[0]+move[1]*move[1])*th.fuelPerMove;
-                q.push([nx,ny,u[2]+1,u[3]+fuelUsed]);
+                best[nx][ny]=best[x][y]+1;
+                q.push([nx,ny]);
             });
         }
         var bestMove = null;
@@ -71,16 +69,13 @@ export class Robot extends Unit{
         this.possibleMoves.forEach(function(move){
             var nx = th.me.x+move[0];
             var ny = th.me.y+move[1];
-            if(th.offMap(nx,ny)||!th.rc.map[ny][nx])
+            if(!th.isWalkable(nx,ny)||best[nx][ny]>best[th.me.x][th.me.y])
                 return;
-            var score;
             var fuelUsed = (move[0]*move[0]+move[1]*move[1])*th.fuelPerMove
             if(fuelUsed>th.rc.fuel)
                 return;
-            switch(urgency){
-                case 1: score=-best[nx][ny][0]; break;
-                case 0: score=-best[nx][ny][1]-fuelUsed;
-            }
+            var turnsSaved = best[th.me.x][th.me.y]-best[nx][ny];
+            var score = turnsSaved*weights[0]-fuelUsed*weights[1];
             if(score>bestScore){
                 bestScore=score;
                 bestMove=move;
