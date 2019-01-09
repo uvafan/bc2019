@@ -11,7 +11,7 @@ export class Robot extends Unit{
 
     getPossibleMoves(){
         var maxMove = SPECS.UNITS[this.me.unit]['SPEED'];
-        var ret = [];
+        var ret = [[0,0]];
         for(var dx=0;dx*dx<=maxMove;dx++){
             for(var dy=0;dy*dy<=maxMove;dy++){
                 if(dx==0&&dy==0)
@@ -32,7 +32,7 @@ export class Robot extends Unit{
     }
 
     //weights: how much to weight turns saved vs. fuel efficiency
-    navTo(target,weights){
+    navTo(target,weights,safe){
         var best = [];
         for(var x=0;x<this.mapSize;x++){
             best.push([]);
@@ -68,7 +68,7 @@ export class Robot extends Unit{
         this.possibleMoves.forEach(function(move){
             var nx = th.me.x+move[0];
             var ny = th.me.y+move[1];
-            if(!th.isWalkable(nx,ny)||best[nx][ny]>best[th.me.x][th.me.y])
+            if(!th.isWalkable(nx,ny)||!th.isSafe(nx,ny))
                 return;
             var fuelUsed = (move[0]*move[0]+move[1]*move[1])*th.fuelPerMove
             if(fuelUsed>th.rc.fuel)
@@ -80,7 +80,7 @@ export class Robot extends Unit{
                 bestMove=move;
             }
         });
-        if(bestMove)
+        if(bestMove && (bestMove[0]!=0 || bestMove[1]!=0))
             return this.rc.move(...bestMove);
         return null;
     }

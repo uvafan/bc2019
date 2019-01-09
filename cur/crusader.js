@@ -8,6 +8,6 @@ export class Crusader extends CombatUnit{
         var attack = this.attackEnemy();
         if(attack)
             return attack;
-        return this.navTo(this.target,[10,1]);
+        return this.navTo(this.target,[10,1],true);
     }
 }
