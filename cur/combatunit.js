@@ -4,14 +4,14 @@ import * as params from 'params.js';
 export class CombatUnit extends Robot{
     constructor(rc){
         super(rc);
-        this.determineFirstTarget();
+        //this.determineFirstTarget();
         this.attackRadius = SPECS.UNITS[this.me.unit]['ATTACK_RADIUS'];
         this.attackCost = SPECS.UNITS[this.me.unit]['ATTACK_FUEL_COST'];
     }
 
-    determineFirstTarget(){
+    /*determineFirstTarget(){
         this.target = this.reflect(this.me.x,this.me.y);
-    }
+    }*/
 
     updateTarget(){
     }
@@ -34,7 +34,7 @@ export class CombatUnit extends Robot{
             var distToR = th.distBtwn(th.me,r);
             if(th.attackRadius[0]>distToR||th.attackRadius[1]<distToR)
                 return;
-            var score = -r.unit*100-distToR;
+            var score = r.unit*100-distToR;
             if(score>bestScore){
                 bestScore = score;
                 ret = th.rc.attack(r.x-th.me.x,r.y-th.me.y);

@@ -2,12 +2,18 @@ import * as params from 'params.js';
 import {SPECS} from 'battlecode'; 
 export class Unit{
     constructor(rc){
-        this.mapSize= rc.map.length;
-        this.rc= rc;
-        this.me= rc.me;
+        this.mapSize = rc.map.length;
+        this.rc = rc;
+        this.me = rc.me;
         this.adjMoves = [[-1,0],[1,0],[0,-1],[0,1]];
         this.adjDiagMoves = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
     }
+
+    turn(rc){
+        this.updateInfo(rc);
+        if(this.me.unit!=SPECS['Castle'])
+            this.sendCastleTalk();
+    } 
 
     updateInfo(rc){
         this.rc = rc;
@@ -16,13 +22,18 @@ export class Unit{
     }
 
     sendCastleTalk(){
-        this.rc.castleTalk(this.me.unit+1);
+        if(this.me.turn>3)
+            this.rc.castleTalk(this.me.unit+1);
     }
 
-    turn(rc){
-        this.updateInfo(rc);
-        this.sendCastleTalk();
-    } 
+    getBroadcastFromLoc(loc){
+        return loc[0]*64+loc[1];
+    }
+
+    getLocFromBroadcast(b){
+        return [Math.floor(b/64),b%64];
+    }
+
     //0 is horiz, 1 is vert
     determineSymmetry(){
         for(var x=0;x<this.mapSize;x++){
@@ -35,7 +46,10 @@ export class Unit{
     }
 
     log(s){
-        this.rc.log(s);
+        if(this.me.unit==SPECS['CASTLE'])
+            this.rc.log('Round '+this.me.turn+': '+s);
+        else
+            this.rc.log(s);
     }
 
     reflect(x,y){
