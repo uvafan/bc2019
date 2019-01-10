@@ -8,15 +8,16 @@ export class Structure extends Unit{
         if (this.rc.karbonite>=SPECS.UNITS[unit].CONSTRUCTION_KARBONITE && 
             this.rc.fuel>SPECS.UNITS[unit].CONSTRUCTION_FUEL+1) {
             var th=this;
-            var bestDist = Number.MAX_SAFE_INTEGER;
+            var bestScore = Number.MIN_SAFE_INTEGER;
             var bestMove = null;
             this.adjDiagMoves.forEach(function(move){
                 var nx = th.me.x+move[0];
                 var ny = th.me.y+move[1];
                 if(th.isWalkable(nx,ny)){
                     var d = th.distBtwnP(nx,ny,target[0],target[1]);
-                    if(d<bestDist){
-                        bestDist=d;
+                    var score = -d-(move[0]*move[0]+move[1]*move[1])*3;
+                    if(score>bestScore){
+                        bestScore=score;
                         bestMove=move;
                     }
                 }

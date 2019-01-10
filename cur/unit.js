@@ -22,8 +22,7 @@ export class Unit{
     }
 
     sendCastleTalk(){
-        if(this.me.turn>3)
-            this.rc.castleTalk(this.me.unit+1);
+        this.rc.castleTalk(this.me.unit+1);
     }
 
     getBroadcastFromLoc(loc){
@@ -46,6 +45,8 @@ export class Unit{
     }
 
     log(s){
+        if(!params.DEBUG)
+            return;
         if(this.me.unit==SPECS['CASTLE'])
             this.rc.log('Round '+this.me.turn+': '+s);
         else
@@ -98,6 +99,10 @@ export class Unit{
 
     distBtwnP(x0,y0,x1,y1){
         return (x0-x1)*(x0-x1)+(y0-y1)*(y0-y1);
+    }
+
+    manhattan(x0,y0,x1,y1){
+        return Math.abs(x1-x0)+Math.abs(y1-y0);
     }
 
 }
