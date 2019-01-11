@@ -41,17 +41,20 @@ export class Castle extends Structure{
     }
 
     getBroadcast(obj){
+        var offset = (this.me.turn%4)<<14;
         if(obj.type<2){
-            return this.getBroadcastFromLoc(obj.target);
+            return this.getBroadcastFromLoc(obj.target)+offset;
         }
         else if(obj.type==2){
-            return this.getBroadcastFromLoc(obj.target)+(1<<12);
+            return this.getBroadcastFromLoc(obj.target)+(1<<12)+offset;
         }
         else if(obj.type==3){
+            var oppCastleAlive = this.locsEqual(this.enemyCastleLocs[0],this.reflect(this.me.x,this.me.y));
+            var oppAliveOffset = (oppCastleAlive?0:(1<<13));
             if(this.enemyCastleLocs.length>1)
-                return this.getBroadcastFromLoc(this.enemyCastleLocs[1]);
+                return this.getBroadcastFromLoc(this.enemyCastleLocs[1])+offset+oppAliveOffset;
             else
-                return this.getBroadcastFromLoc(this.enemyCastleLocs[0]);
+                return this.getBroadcastFromLoc(this.enemyCastleLocs[0])+offset+oppAliveOffset;
         }
     }
 
@@ -156,38 +159,42 @@ export class Castle extends Structure{
         }
         this.objectives=newObjs;
     }
-    
 
     processCastleTalk(){
-        this.unitCounts = [0,0,0,0,0,0];
+        if(this.me.turn%4==0){
+            this.unitCounts = [0,0,0,0,0,0];
+        }
         var visRobots = this.rc.getVisibleRobots();
         var ids = [];
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];
-            if(r.castle_talk != null && r.castle_talk>0 && (r.team==null || r.team==this.me.team) && r.castle_talk<10){
-                //th.log(r.id+' '+r.castle_talk);
-                this.unitCounts[r.castle_talk-1]++;
+            if(r.castle_talk != null && (r.team==null || r.team==this.me.team) && r.castle_talk<10){
+                if(this.me.turn%4==0){
+                    this.unitCounts[r.castle_talk-1]++;
+                }
+                else if(this.me.turn%4==1&&r.castle_talk>0){
+                    if(this.objectives[0].processFoundDead(r.id,this.enemyCastleLocs)){
+                        this.enemyCastleLocs.shift();
+                    }
+                }
                 ids.push(r.id);
-                if(r.x!=null && r.unit != SPECS['CASTLE']){
+                if(r.x != null && r.unit != SPECS['CASTLE']){
                     if(!this.lastIds.includes(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16){ 
                         this.objectives[this.lastObjIdx].assign(r.id);
-                        //th.log(th.objectives[th.lastObjIdx].objInfo());
                     }
                 }
             }
         }
+        if(this.me.turn%4==0){
+            this.strat.updateUnitCounts(this.unitCounts);
+        }
         this.lastIds = ids;
-        //this.log(ids);
         for(var i=0;i<this.objectives.length;i++){
-            //this.log('b '+this.objectives[i].assignees);
             this.objectives[i].updateAssignees(ids);
-            //this.log('a '+this.objectives[i].assignees);
         }
         if(this.me.turn<4){
             this.castleTalkFirst3();
         }
-        this.strat.updateUnitCounts(this.unitCounts);
-        //this.log('unit counts '+this.unitCounts);
     }
 
     castleTalkFirst3(){

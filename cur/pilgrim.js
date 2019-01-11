@@ -31,8 +31,10 @@ export class Pilgrim extends Robot{
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];
             if(r.team==this.me.team&&this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=2&&(r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])){
+                this.offset = r.signal>>14;
+                var locb = r.signal&((1<<14)-1);
                 this.structLoc = [r.x,r.y];
-                this.target = this.getLocFromBroadcast(r.signal);                
+                this.target = this.getLocFromBroadcast(locb);                
             }
         }
         //this.log('T '+this.target);

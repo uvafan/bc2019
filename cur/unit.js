@@ -22,7 +22,13 @@ export class Unit{
     }
 
     sendCastleTalk(){
-        this.rc.castleTalk(this.me.unit+1);
+        if((this.me.turn+this.offset)%4==0){
+            this.rc.castleTalk(this.me.unit+1);
+        }
+        else if((this.me.turn+this.offset)%4==1&&this.castleDead){
+            this.rc.castleTalk(1);
+            this.castleDead=false;
+        }
     }
 
     getBroadcastFromLoc(loc){
@@ -103,6 +109,10 @@ export class Unit{
 
     manhattan(x0,y0,x1,y1){
         return Math.abs(x1-x0)+Math.abs(y1-y0);
+    }
+
+    locsEqual(l0,l1){
+        return l0[0]==l1[0]&&l0[1]==l1[1];
     }
 
 }

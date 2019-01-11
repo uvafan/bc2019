@@ -13,6 +13,8 @@ export class Objective {
         this.assignees=[];
         this.objectiveStrs = ['GATHER_KARB','GATHER_FUEL','DEFEND_PILGRIM','ATTACK_ENEMY','DEFEND_CASTLE'];
         this.th = th;
+        this.targNum=0;
+        this.assigneesToTarg={};
     }
 
     log(s){
@@ -50,6 +52,7 @@ export class Objective {
 
     assign(id){
         this.assignees.push(id);
+        this.assigneesToTarg[id]=this.targNum;
     }
 
     unitNeeded(strat){
@@ -88,6 +91,17 @@ export class Objective {
 
     defendCastlePriority(){
         return 0;
+    }
+
+    processFoundDead(id,ecl){
+        this.assigneesToTarg[id]++;
+        if(this.assigneesToTarg[id]>this.targNum){
+            this.targNum++;
+            this.target = ecl[1];
+            this.distFromMe = this.th.manhattan(ecl[1][0],ecl[1][1],this.th.me.x,this.th.me.y);
+            return true;
+        }
+        return false;
     }
 
 }

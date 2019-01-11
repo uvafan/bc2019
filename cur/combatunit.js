@@ -7,6 +7,8 @@ export class CombatUnit extends Robot{
         this.getFirstTarget();
         this.attackRadius = SPECS.UNITS[this.me.unit]['ATTACK_RADIUS'];
         this.attackCost = SPECS.UNITS[this.me.unit]['ATTACK_FUEL_COST'];
+        this.castleDead=false;
+        this.stopChecks=false;
     }
 
     getFirstTarget(){
@@ -14,16 +16,26 @@ export class CombatUnit extends Robot{
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];
             if(r.team==this.me.team&&this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=2&&(r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])){
-                if(r.signal&(1<<12)){
+                this.offset = r.signal>>14;
+                var locb = r.signal&((1<<14)-1);
+                if(locb&(1<<12)){
                     this.attacking = false;
-                    this.target = this.getLocFromBroadcast(r.signal^(1<<12));
+                    this.target = this.getLocFromBroadcast(locb^(1<<12));
                     this.target = this.stepTowards(this.target,this.reflect(r.x,r.y),3);
-                    this.log('T '+this.target);
+                    //this.log('T '+this.target);
                 }
                 else{
+                    var oppCastleAlive = true;
+                    if(locb&(1<<13)){
+                        oppCastleAlive=false;
+                        locb = locb^(1<<13);
+                    }
                     this.attacking = true;
-                    this.target = this.reflect(r.x,r.y);
-                    this.secondaryTarget = this.getLocFromBroadcast(r.signal);
+                    var bloc = this.getLocFromBroadcast(locb);
+                    this.target = oppCastleAlive?this.reflect(r.x,r.y):bloc;
+                    this.secondaryTarget = bloc;
+                    //this.log('T '+this.target);
+                    //this.log('ST '+this.secondaryTarget);
                 }
             }
         }
@@ -73,10 +85,22 @@ export class CombatUnit extends Robot{
         var attack = this.attackEnemy();
         if(attack)
             return attack;
+        if(this.attacking&&!this.stopChecks)
+            this.moveOnToSecondaryIfNeeded();
         var nav_weights = (this.attacking?params.ATT_NAV_WEIGHTS:params.DEF_NAV_WEIGHTS);
         if(this.manhattan(this.target[0],this.target[1],this.me.x,this.me.y)>1)
             return this.navTo(this.target,nav_weights,true);
         return null;
+    }
+
+    moveOnToSecondaryIfNeeded(){
+        if(this.visRobotMap[this.target[1]][this.target[0]]==0){
+            if(this.target==this.secondaryTarget){
+                this.stopChecks=true;
+            }
+            this.target = this.secondaryTarget;
+            this.castleDead=true;
+        }
     }
 
     attackEnemy(){
