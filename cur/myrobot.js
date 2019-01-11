@@ -7,25 +7,11 @@ export class Robot extends Unit{
         super(rc);
         this.possibleMoves = this.getPossibleMoves();
         this.fuelPerMove = SPECS.UNITS[this.me.unit]['FUEL_PER_MOVE'];
-        this.getFirstTarget();
-    }
-
-    getFirstTarget(){
-        var visRobots = this.rc.getVisibleRobots();
-        for(var i=0;i<visRobots.length;i++){
-            var r = visRobots[i];
-            if(r.team==this.me.team&&this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=2&&(r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])){
-                this.structLoc = [r.x,r.y];
-                this.target = this.getLocFromBroadcast(r.signal);                
-            }
-        }
-        //this.log('T '+this.target);
-        //this.log('SL '+this.structLoc);
     }
     
     getPossibleMoves(){
         var maxMove = SPECS.UNITS[this.me.unit]['SPEED'];
-        var ret = [[0,0]];
+        var ret = [];
         for(var dx=0;dx*dx<=maxMove;dx++){
             for(var dy=0;dy*dy<=maxMove;dy++){
                 if(dx==0&&dy==0)
@@ -94,6 +80,8 @@ export class Robot extends Unit{
                 bestMove=move;
             }
         });
+        //this.log(weights);
+        //this.log(bestMove);
         if(bestMove && (bestMove[0]!=0 || bestMove[1]!=0))
             return this.rc.move(...bestMove);
         return null;

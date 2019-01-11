@@ -11,7 +11,7 @@ export class Objective {
         this.distFromMe=dfm;
         this.distFromEnemy=dfe;
         this.assignees=[];
-        this.objectiveStrs = ['GATHER_KARB','GATHER_FUEL','DEFEND_PILGRIM','ATTACK_ENEMY'];
+        this.objectiveStrs = ['GATHER_KARB','GATHER_FUEL','DEFEND_PILGRIM','ATTACK_ENEMY','DEFEND_CASTLE'];
         this.th = th;
     }
 
@@ -30,7 +30,8 @@ export class Objective {
             case 0: ret = this.gatherKarbPriority(karb,fuel); break;
             case 1: ret = this.gatherFuelPriority(karb,fuel); break;
             case 2: ret = this.defendPilgPriority(); break;
-            case 3: ret = this.attackEnemyPriority();
+            case 3: ret = this.attackEnemyPriority(); break;
+            case 4: ret = this.defendCastlePriority(); 
         }
         //this.log(ret);
         return ret*strat.objWeights(this.round)[this.type];
@@ -75,14 +76,18 @@ export class Objective {
 
     //info: distance from me, distance from enemy, amount currently defending    
     defendPilgPriority(){
-        return 0;
+        return (this.assignees.length?1:20);
     }
 
     //info: rush distance, amount currently attacking
     attackEnemyPriority(){
         var distScore = Math.max(30-this.distFromMe,1);
-        this.log('al '+this.assignees.length);
+        //this.log('al '+this.assignees.length);
         return this.assignees.length*10+distScore;
+    }
+
+    defendCastlePriority(){
+        return 0;
     }
 
 }

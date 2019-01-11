@@ -1,8 +1,13 @@
 import {SPECS} from 'battlecode'; 
-import {CombatUnit} from 'combatunit.js';
+import {Robot} from 'myrobot.js';
 import * as params from 'params.js';
 
-export class Pilgrim extends CombatUnit{
+export class Pilgrim extends Robot{
+    constructor(rc){
+        super(rc);
+        this.getFirstTarget();
+    }
+
     turn(rc){
         super.turn(rc);
         if(this.isFull()){
@@ -19,6 +24,19 @@ export class Pilgrim extends CombatUnit{
         else{
             return this.navTo(this.target,params.PILGRIM_NAV_WEIGHTS,true);
         }
+    }
+
+    getFirstTarget(){
+        var visRobots = this.rc.getVisibleRobots();
+        for(var i=0;i<visRobots.length;i++){
+            var r = visRobots[i];
+            if(r.team==this.me.team&&this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=2&&(r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])){
+                this.structLoc = [r.x,r.y];
+                this.target = this.getLocFromBroadcast(r.signal);                
+            }
+        }
+        //this.log('T '+this.target);
+        //this.log('SL '+this.structLoc);
     }
 
     isFull(){

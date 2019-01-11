@@ -26,14 +26,33 @@ export class Castle extends Structure{
         var obj = this.getHighestPriorityObjective();
         var info = this.getUnitTargetAndBroadcast(obj);
         var build = this.buildUnit(info[0],info[1],info[2]);
+        if(build&&info[0]==SPECS['PILGRIM']){
+            var newObj = new Objective(2,this.me.turn,info[1],obj.dfm,obj.dfe,this);
+            this.objectives.push(newObj);
+        }
         return build;
     }
 
     getUnitTargetAndBroadcast(obj){
         var unit = obj.unitNeeded(this.strat);
         var target = obj.target;
-        var broadcast = this.getBroadcastFromLoc(target);
+        var broadcast = this.getBroadcast(obj);
         return [unit,target,broadcast];
+    }
+
+    getBroadcast(obj){
+        if(obj.type<2){
+            return this.getBroadcastFromLoc(obj.target);
+        }
+        else if(obj.type==2){
+            return this.getBroadcastFromLoc(obj.target)+(1<<12);
+        }
+        else if(obj.type==3){
+            if(this.enemyCastleLocs.length>1)
+                return this.getBroadcastFromLoc(this.enemyCastleLocs[1]);
+            else
+                return this.getBroadcastFromLoc(this.enemyCastleLocs[0]);
+        }
     }
 
     updateObjectives(){

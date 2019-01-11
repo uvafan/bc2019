@@ -17,7 +17,6 @@ export class Strategy {
         return this.strategyStrs[this.type];
     }
 
-    //['GATHER_KARB','GATHER_FUEL','DEFEND_PILGRIM','ATTACK_ENEMY']
     objWeights(round){
         switch(this.type){
             case 0: return this.getBalancedWeights(round);
@@ -32,9 +31,9 @@ export class Strategy {
 
     //Balanced Buildup strat
 
-    //['GATHER_KARB','GATHER_FUEL','DEFEND_PILGRIM','ATTACK_ENEMY']
+    //['GATHER_KARB','GATHER_FUEL','DEFEND_PILGRIM','ATTACK_ENEMY','DEFEND_CASTLE']
     getBalancedWeights(round){
-        return [1,0,0,1];
+        return [1,0,1,1,0];
     }
 
     getBalancedUnit(objType,round){
@@ -45,9 +44,12 @@ export class Strategy {
             return SPECS['PILGRIM'];
         }
         else if(objType==2){
-            return SPECS['CRUSADER'];
+            return SPECS['PREACHER'];
         }
         else if(objType==3){
+            return SPECS['PREACHER'];
+        }
+        else if(objType==4){
             return SPECS['CRUSADER'];
         }
     }
