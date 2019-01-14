@@ -4,6 +4,8 @@ import * as params from 'params.js';
 export class CombatUnit extends Robot{
     constructor(rc){
         super(rc);
+        this.createdBy=[];
+        this.switchTurn=params.DEFENDERS_ATTACK_ROUND;
         this.getFirstTarget();
         this.attackRadius = SPECS.UNITS[this.me.unit]['ATTACK_RADIUS'];
         this.attackCost = SPECS.UNITS[this.me.unit]['ATTACK_FUEL_COST'];
@@ -18,10 +20,19 @@ export class CombatUnit extends Robot{
             if(r.team==this.me.team&&this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=2&&(r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])){
                 this.offset = r.signal>>14;
                 var locb = r.signal&((1<<14)-1);
+                this.createdBy = [r.x,r.y];
                 if(locb&(1<<12)){
                     this.attacking = false;
-                    var target = this.getLocFromBroadcast(locb^(1<<12));
-                    this.updateTarget(this.stepTowards(target,this.reflect(r.x,r.y),3));
+                    var target;
+                    if(locb&(1<<13)){
+                        target = [r.x,r.y];
+                        var currentRound = locb^((1<<12)+(1<<13));
+                        this.switchTurn = params.DEFENDERS_ATTACK_ROUND-currentRound;
+                    }
+                    else{
+                        target = this.getLocFromBroadcast(locb^(1<<12));
+                    }
+                    this.updateTarget(this.stepTowards(target,this.reflect(r.x,r.y),params.DEFENSIVE_DISTANCE));
                 }
                 else{
                     var oppCastleAlive = true;
@@ -80,6 +91,12 @@ export class CombatUnit extends Robot{
             if(micro)
                 return micro;
         }
+        if(!this.attacking && this.switchTurn<=this.me.turn){
+            this.attacking = true;
+            this.updateTarget(this.reflect(this.createdBy[0],this.createdBy[1]));
+            //this.log('T '+this.target);
+            this.secondaryTarget = this.target;
+        }
         if(this.attacking&&!this.stopChecks)
             this.moveOnToSecondaryIfNeeded();
         var nav_weights = (this.attacking?params.ATT_NAV_WEIGHTS:params.DEF_NAV_WEIGHTS);
@@ -102,7 +119,7 @@ export class CombatUnit extends Robot{
         var id = this.visRobotMap[this.target[1]][this.target[0]];
         if(id==0)
             return true;
-        return id>0 && this.getRobot(id).team!=this.me.team;
+        return id>0 && this.rc.getRobot(id).team!=this.me.team;
     }
 
     attackEnemy(){

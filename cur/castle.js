@@ -1,7 +1,7 @@
 import {SPECS} from 'battlecode'; 
 import {Structure} from 'structure.js';
-import {Objective} from 'objective.js';
-import {Strategy} from 'strategy.js';
+import * as objectives from 'objective.js';
+import * as strategies from 'strategy.js';
 import * as params from 'params.js';
 
 export class Castle extends Structure{
@@ -15,6 +15,7 @@ export class Castle extends Structure{
         this.lastObjIdx = -1;
         this.lastIds = [];
         this.initializeAttackObjectives();
+        this.initializeDefenseObjectives();
         this.initializeMiningObjectives();
         this.getInitialStrategy();
     }
@@ -27,7 +28,7 @@ export class Castle extends Structure{
         var info = this.getUnitTargetAndBroadcast(obj);
         var build = this.buildUnit(info[0],info[1],info[2]);
         if(build&&info[0]==SPECS['PILGRIM']){
-            var newObj = new Objective(2,this.me.turn,info[1],obj.dfm,obj.dfe,this);
+            var newObj = new objectives.defendPilgrim(2,this.me.turn,this);
             this.objectives.push(newObj);
         }
         return build;
@@ -56,6 +57,9 @@ export class Castle extends Structure{
             else
                 return this.getBroadcastFromLoc(this.enemyCastleLocs[0])+offset+oppAliveOffset;
         }
+        else if(obj.type==4){
+            return this.me.turn+(1<<12)+(1<<13)+offset;
+        }
     }
 
     updateObjectives(){
@@ -81,12 +85,17 @@ export class Castle extends Structure{
     }
 
     getInitialStrategy(){
-        this.strat = new Strategy(0);
+        this.strat = new strategies.DefendCastles();
     }
 
     initializeAttackObjectives(){
         var ecl = this.enemyCastleLocs[0];
-        var obj = new Objective(3,this.me.turn,ecl,this.manhattan(this.me.x,this.me.y,ecl[0],ecl[1]),0,this);
+        var obj = new objectives.attackEnemy(this.me.turn,ecl,this,this.manhattan(this.me.x,this.me.y,ecl[0],ecl[1]));
+        this.objectives.push(obj);
+    }
+
+    initializeDefenseObjectives(){
+        var obj = new objectives.defendCastle(this.me.turn,[this.me.x,this.me.y],this,this.manhattan(this.me.x,this.me.y,this.enemyCastleLocs[0],this.enemyCastleLocs[1]));
         this.objectives.push(obj);
     }
 
@@ -115,7 +124,10 @@ export class Castle extends Structure{
                     var myDist = this.manhattan(nx,ny,this.me.x,this.me.y);
                     var type = this.rc.karbonite_map[ny][nx]?0:1;
                     if(myDist<dfe){
-                        var obj = new Objective(type,this.me.turn,[nx,ny],myDist,dfe,this);
+                        if(type==0)
+                            var obj = new objectives.gatherKarb(this.me.turn,[nx,ny],this,myDist);
+                        else
+                            var obj = new objectives.gatherFuel(this.me.turn,[nx,ny],this,myDist);
                         this.objectives.push(obj);
                     }
                 }

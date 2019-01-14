@@ -18,18 +18,20 @@ export class Preacher extends CombatUnit{
     attackEnemy(){
         if(this.rc.fuel < this.attackCost)
             return null;
-        var ret = null;
         var bestScore = 0;
+        var bestOff = null;
         for(var i=0;i<this.attackOffsets.length;i++){
             var off = this.attackOffsets[i];
             var score = this.scoreTile(off);
             if(score>bestScore){
                 bestScore = score;
-                ret = this.rc.attack(off[0],off[1]);
-                this.log('attacking '+off[0]+ ' '+off[1]);
+                bestOff=off;
             }
         }
-        return ret;
+        if(!bestOff)
+            return null;
+        this.log('attacking '+bestOff[0]+ ' '+bestOff[1]);
+        return this.rc.attack(bestOff[0],bestOff[1]);
     }
 
     scoreTile(off){

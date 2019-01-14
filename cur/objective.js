@@ -1,20 +1,16 @@
 import {SPECS} from 'battlecode'; 
-import {Strategy} from 'strategy.js';
+import * as strategies from 'strategy.js';
 import * as params from 'params.js';
 
 
 export class Objective {
-    constructor(t,r,tar,dfm,dfe,th){
-        this.type=t;
+    constructor(r,tar,th){
         this.round=r;
         this.target=tar;
-        this.distFromMe=dfm;
-        this.distFromEnemy=dfe;
-        this.assignees=[];
-        this.objectiveStrs = ['GATHER_KARB','GATHER_FUEL','DEFEND_PILGRIM','ATTACK_ENEMY','DEFEND_CASTLE'];
         this.th = th;
-        this.targNum=0;
+        this.assignees=[];
         this.assigneesToTarg={};
+        this.targNum=0;
     }
 
     log(s){
@@ -22,21 +18,11 @@ export class Objective {
     }
 
     objInfo(){
-        return String(this.objectiveStrs[this.type])+' t: '+String(this.target);
+        return String(this.typeStr)+' t: '+String(this.target);
     }
 
     getPriority(strat,karb,fuel){
-        var ret;
-        //this.log(this.type);
-        switch(this.type){
-            case 0: ret = this.gatherKarbPriority(karb,fuel); break;
-            case 1: ret = this.gatherFuelPriority(karb,fuel); break;
-            case 2: ret = this.defendPilgPriority(); break;
-            case 3: ret = this.attackEnemyPriority(); break;
-            case 4: ret = this.defendCastlePriority(); 
-        }
-        //this.log(ret);
-        return ret*strat.objWeights(this.round)[this.type];
+        return this.getPriorityStratAgnostic(karb,fuel)*strat.objWeights(this.round)[this.type];
     }
 
     updateAssignees(idsAlive){
@@ -59,38 +45,66 @@ export class Objective {
         return strat.getUnitNeeded(this.type,this.round);
     }
 
-    //info: distance from me, distance from enemy, cur amount of fuel, cur amount of karb
-    gatherKarbPriority(karb,fuel){
-        if(this.assignees.length)
-            return -1;
-        var karbNeeded = (karb*5>fuel?0:1);
-        var distScore = Math.max(100-this.distFromMe*this.distFromMe,1);
-        return distScore/(karbNeeded?2:1);
+}
+
+export class gatherKarb extends Objective {
+    constructor(r,tar,th,dfm){
+        super(r,tar,th);
+        this.distFromMe = dfm;
+        this.typeStr = 'GATHER_KARBONITE';
+        this.type=0;
     }
 
-    //info: distance from me, distance from enemy, cur amount of fuel, cur amount of karb
-    gatherFuelPriority(karb,fuel){
+    getPriorityStratAgnostic(karb,fuel){
         if(this.assignees.length)
-            return -1;
+            return 0;
         var karbNeeded = (karb*5>fuel?0:1);
         var distScore = Math.max(200-this.distFromMe*this.distFromMe,1);
         return distScore/(karbNeeded?1:2);
     }
+}
 
-    //info: distance from me, distance from enemy, amount currently defending    
-    defendPilgPriority(){
-        return (this.assignees.length?1:20);
+export class gatherFuel extends Objective {
+    constructor(r,tar,th,dfm){
+        super(r,tar,th);
+        this.distFromMe = dfm;
+        this.typeStr = 'GATHER_FUEL';
+        this.type=1;
     }
 
-    //info: rush distance, amount currently attacking
-    attackEnemyPriority(){
+    getPriorityStratAgnostic(karb,fuel){
+        if(this.assignees.length)
+            return 0;
+        var karbNeeded = (karb*5>fuel?0:1);
+        var distScore = Math.max(200-this.distFromMe*this.distFromMe,1);
+        return distScore/(karbNeeded?2:1);
+    }
+}
+
+export class defendPilgrim extends Objective {
+    constructor(r,tar,th){
+        super(r,tar,th);
+        this.typeStr = 'DEFEND_PILGRIM';
+        this.type=2;
+    }
+
+    getPriorityStratAgnostic(karb,fuel){
+        return this.assignees.length?1:20;
+    }
+}
+
+export class attackEnemy extends Objective {
+    constructor(r,tar,th,dfm){
+        super(r,tar,th);
+        this.distFromMe=dfm;
+        this.typeStr = 'ATTACK_ENEMY';
+        this.type=3;
+    }
+
+    getPriorityStratAgnostic(karb,fuel){
         var distScore = Math.max(30-this.distFromMe,1);
         //this.log('al '+this.assignees.length);
         return this.assignees.length*10+distScore;
-    }
-
-    defendCastlePriority(){
-        return 0;
     }
 
     processFoundDead(id,ecl){
@@ -103,5 +117,20 @@ export class Objective {
         }
         return false;
     }
-
 }
+
+export class defendCastle extends Objective {
+    constructor(r,tar,th,dfe){
+        super(r,tar,th);
+        this.distFromEnemy = dfe;
+        this.typeStr = 'DEFEND_CASTLE';
+        this.type=4;
+    }
+
+    getPriorityStratAgnostic(karb,fuel){
+        return 10-this.assignees.length;
+    }
+}
+
+
+

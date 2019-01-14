@@ -67,12 +67,15 @@ export class Robot extends Unit{
             var movementScore = turnsSaved*10-distRem;
             var splashBadness = this.getSplashBadness(nx,ny); 
             var score = movementScore*weights[0]-fuelUsed*weights[1]-splashBadness*weights[2];
+            if(move[0]==0&&move[1]==0)
+                score-=params.STOP_PENALTY;
             if(score>bestScore){
                 bestScore=score;
                 bestMove=move;
             }
         }
         //this.log(weights);
+        //this.log(this.me.x+' '+this.me.y);
         //this.log(bestMove);
         if(bestMove && (bestMove[0]!=0 || bestMove[1]!=0))
             return this.rc.move(...bestMove);
