@@ -20,9 +20,8 @@ export class CombatUnit extends Robot{
                 var locb = r.signal&((1<<14)-1);
                 if(locb&(1<<12)){
                     this.attacking = false;
-                    this.target = this.getLocFromBroadcast(locb^(1<<12));
-                    this.target = this.stepTowards(this.target,this.reflect(r.x,r.y),3);
-                    //this.log('T '+this.target);
+                    var target = this.getLocFromBroadcast(locb^(1<<12));
+                    this.updateTarget(this.stepTowards(target,this.reflect(r.x,r.y),3));
                 }
                 else{
                     var oppCastleAlive = true;
@@ -32,14 +31,12 @@ export class CombatUnit extends Robot{
                     }
                     this.attacking = true;
                     var bloc = this.getLocFromBroadcast(locb);
-                    this.target = oppCastleAlive?this.reflect(r.x,r.y):bloc;
+                    this.updateTarget(oppCastleAlive?this.reflect(r.x,r.y):bloc);
                     this.secondaryTarget = bloc;
-                    //this.log('T '+this.target);
                     //this.log('ST '+this.secondaryTarget);
                 }
             }
         }
-        //this.log('T '+this.target);
     }
 
     stepTowards(loc,to,steps){
@@ -76,12 +73,8 @@ export class CombatUnit extends Robot{
         return best;
     }
 
-    updateTarget(){
-    }
-
     turn(rc){
         super.turn(rc);
-        this.updateTarget();
         if(this.enemyInSight()){
             var micro = this.doMicro();
             if(micro)
@@ -90,9 +83,9 @@ export class CombatUnit extends Robot{
         if(this.attacking&&!this.stopChecks)
             this.moveOnToSecondaryIfNeeded();
         var nav_weights = (this.attacking?params.ATT_NAV_WEIGHTS:params.DEF_NAV_WEIGHTS);
-        if(this.manhattan(this.target[0],this.target[1],this.me.x,this.me.y)>1)
-            return this.navTo(this.target,nav_weights,true);
-        return null;
+        //if(this.manhattan(this.target[0],this.target[1],this.me.x,this.me.y)>1)
+        return this.navTo(this.targetDists,this.target,nav_weights,true);
+        //return null;
     }
 
     moveOnToSecondaryIfNeeded(){
@@ -100,7 +93,7 @@ export class CombatUnit extends Robot{
             if(this.target==this.secondaryTarget){
                 this.stopChecks=true;
             }
-            this.target = this.secondaryTarget;
+            this.updateTarget(this.secondaryTarget);
             this.castleDead=true;
         }
     }

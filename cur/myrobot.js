@@ -5,24 +5,28 @@ export class Robot extends Unit{
 
     constructor(rc){
         super(rc);
-        this.possibleMoves = this.getDxDyWithin(1,SPECS.UNITS[this.me.unit]['SPEED']);
+        this.possibleMoves = this.getDxDyWithin(0,SPECS.UNITS[this.me.unit]['SPEED']);
         this.fuelPerMove = SPECS.UNITS[this.me.unit]['FUEL_PER_MOVE'];
+        this.splash = this.getDxDyWithin(0,2);
     }
-    
-    //weights: how much to weight turns saved vs. fuel efficiency
-    navTo(target,weights,safe){
-        var best = [];
+
+    updateTarget(target){
+        this.target=target;
+        this.targetDists = this.runBFS(target);
+    }
+
+    runBFS(start){
+        var dist = [];
         for(var x=0;x<this.mapSize;x++){
-            best.push([]);
+            dist.push([]);
             for(var y=0;y<this.mapSize;y++){
-                best[x].push(Number.MAX_SAFE_INTEGER);
+                dist[x].push(Number.MAX_SAFE_INTEGER);
             }
         }
         var q = [];
         //x,y,turns,fuel
-        q.push([target[0],target[1]]);
-        best[target[0]][target[1]]=0;
-        var th = this;
+        q.push([start[0],start[1]]);
+        dist[start[0]][start[1]]=0;
         var count=0;
         while(q.length>0){
             /*count++;
@@ -31,38 +35,66 @@ export class Robot extends Unit{
             var u = q.shift();
             var x = u[0];
             var y = u[1];
-            //this.log('x '+x+' y '+y + ' b0 ' + best[x][y]);
-            this.adjMoves.forEach(function(move){
+            //this.log('x '+x+' y '+y + ' d0 ' + dist[x][y]);
+            for(var i=0;i<this.possibleMoves.length;i++){
+                var move = this.possibleMoves[i];
                 var nx = x+move[0];
                 var ny = y+move[1];
-                if(!th.isPassable(nx,ny)||best[nx][ny]<=best[x][y]+1)
-                    return;
-                best[nx][ny]=best[x][y]+1;
+                if(!this.isPassable(nx,ny)||dist[nx][ny]<=dist[x][y]+1)
+                    continue;
+                dist[nx][ny]=dist[x][y]+1;
                 q.push([nx,ny]);
-            });
+            }
         }
+        return dist;
+    }
+
+    //weights: [movement,fuel efficiency,splash resistance]
+    navTo(dists,dest,weights,safe){
         var bestMove = null;
         var bestScore = Number.MIN_SAFE_INTEGER;
-        this.possibleMoves.forEach(function(move){
-            var nx = th.me.x+move[0];
-            var ny = th.me.y+move[1];
-            if(!th.isWalkable(nx,ny)||!th.isSafe(nx,ny))
-                return;
-            var fuelUsed = (move[0]*move[0]+move[1]*move[1])*th.fuelPerMove
-            if(fuelUsed>th.rc.fuel)
-                return;
-            var turnsSaved = best[th.me.x][th.me.y]-best[nx][ny];
-            var score = turnsSaved*weights[0]-fuelUsed*weights[1];
+        for(var i=0;i<this.possibleMoves.length;i++){
+            var move = this.possibleMoves[i];
+            var nx = this.me.x+move[0];
+            var ny = this.me.y+move[1];
+            if(!this.isWalkable(nx,ny)||!this.isSafe(nx,ny))
+                continue;
+            var fuelUsed = (move[0]*move[0]+move[1]*move[1])*this.fuelPerMove
+            if(fuelUsed>this.rc.fuel)
+                continue;
+            var turnsSaved = dists[this.me.x][this.me.y]-dists[nx][ny];
+            var distRem = this.manhattan(nx,ny,dest[0],dest[1]);
+            var movementScore = turnsSaved*10-distRem;
+            var splashBadness = this.getSplashBadness(nx,ny); 
+            var score = movementScore*weights[0]-fuelUsed*weights[1]-splashBadness*weights[2];
             if(score>bestScore){
                 bestScore=score;
                 bestMove=move;
             }
-        });
+        }
         //this.log(weights);
         //this.log(bestMove);
         if(bestMove && (bestMove[0]!=0 || bestMove[1]!=0))
             return this.rc.move(...bestMove);
         return null;
+    }
+
+    getSplashBadness(x,y){
+        var badness=0;
+        for(var i=0;i<this.splash.length;i++){
+            var off = this.splash[i];
+            var nx=x+off[0];
+            var ny=y+off[1];
+            if(this.offMap(nx,ny))
+                continue;
+            var rid = this.visRobotMap[ny][nx];
+            if(rid>0&&rid!=this.me.id){
+                var r = this.rc.getRobot(rid);
+                if(r.team==this.me.team)
+                    badness++;
+            }
+        }
+        return badness;
     }
 
 }

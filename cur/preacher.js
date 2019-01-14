@@ -6,7 +6,6 @@ export class Preacher extends CombatUnit{
     constructor(rc){
         super(rc);
         this.attackOffsets = this.getDxDyWithin(SPECS.UNITS[this.me.unit]['ATTACK_RADIUS'][0],SPECS.UNITS[this.me.unit]['ATTACK_RADIUS'][1]);
-        this.splash = this.getDxDyWithin(0,2);
     }
 
     doMicro(){
@@ -27,6 +26,7 @@ export class Preacher extends CombatUnit{
             if(score>bestScore){
                 bestScore = score;
                 ret = this.rc.attack(off[0],off[1]);
+                this.log('attacking '+off[0]+ ' '+off[1]);
             }
         }
         return ret;
@@ -44,7 +44,7 @@ export class Preacher extends CombatUnit{
         for(var i=0;i<this.splash.length;i++){
             var off = this.splash[i];
             var splashTile = [tile[0]+off[0],tile[1]+off[1]];
-            if(this.offMap(splashTile[0],splashTile[1])){
+            if(!this.isPassable(splashTile[0],splashTile[1])){
                 continue;
             }
             //this.log('s '+splashTile);

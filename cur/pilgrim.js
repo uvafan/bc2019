@@ -6,6 +6,7 @@ export class Pilgrim extends Robot{
     constructor(rc){
         super(rc);
         this.getFirstTarget();
+        this.structDists = this.runBFS(this.structLoc);
     }
 
     turn(rc){
@@ -15,14 +16,14 @@ export class Pilgrim extends Robot{
                 return this.rc.give(this.structLoc[0]-this.me.x,this.structLoc[1]-this.me.y,this.me.karbonite,this.me.fuel);
             }
             else{
-                return this.navTo(this.structLoc,params.PILGRIM_NAV_WEIGHTS,true);
+                return this.navTo(this.structDists,this.structLoc,params.PILGRIM_NAV_WEIGHTS,true);
             }
         }
         else if(this.me.x==this.target[0]&&this.me.y==this.target[1]&&this.rc.fuel>0){
             return this.rc.mine();
         }
         else{
-            return this.navTo(this.target,params.PILGRIM_NAV_WEIGHTS,true);
+            return this.navTo(this.targetDists,this.target,params.PILGRIM_NAV_WEIGHTS,true);
         }
     }
 
@@ -34,7 +35,7 @@ export class Pilgrim extends Robot{
                 this.offset = r.signal>>14;
                 var locb = r.signal&((1<<14)-1);
                 this.structLoc = [r.x,r.y];
-                this.target = this.getLocFromBroadcast(locb);                
+                this.updateTarget(this.getLocFromBroadcast(locb));                
             }
         }
         //this.log('T '+this.target);
