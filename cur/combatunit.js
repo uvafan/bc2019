@@ -82,9 +82,11 @@ export class CombatUnit extends Robot{
     turn(rc){
         super.turn(rc);
         this.updateTarget();
-        var attack = this.attackEnemy();
-        if(attack)
-            return attack;
+        if(this.enemyInSight()){
+            var micro = this.doMicro();
+            if(micro)
+                return micro;
+        }
         if(this.attacking&&!this.stopChecks)
             this.moveOnToSecondaryIfNeeded();
         var nav_weights = (this.attacking?params.ATT_NAV_WEIGHTS:params.DEF_NAV_WEIGHTS);
@@ -94,13 +96,20 @@ export class CombatUnit extends Robot{
     }
 
     moveOnToSecondaryIfNeeded(){
-        if(this.visRobotMap[this.target[1]][this.target[0]]==0){
+        if(this.targetDead()){
             if(this.target==this.secondaryTarget){
                 this.stopChecks=true;
             }
             this.target = this.secondaryTarget;
             this.castleDead=true;
         }
+    }
+
+    targetDead(){
+        var id = this.visRobotMap[this.target[1]][this.target[0]];
+        if(id==0)
+            return true;
+        return id>0 && this.getRobot(id).team!=this.me.team;
     }
 
     attackEnemy(){
@@ -123,6 +132,17 @@ export class CombatUnit extends Robot{
             }
         });
         return ret;
+    }
+
+    enemyInSight(){
+        var visRobots = this.rc.getVisibleRobots();
+        for(var i=0;i<visRobots.length;i++){
+            var r = visRobots[i];
+            if(r.team != null && r.x!= null && r.team != this.me.team){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

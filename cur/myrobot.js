@@ -5,32 +5,10 @@ export class Robot extends Unit{
 
     constructor(rc){
         super(rc);
-        this.possibleMoves = this.getPossibleMoves();
+        this.possibleMoves = this.getDxDyWithin(1,SPECS.UNITS[this.me.unit]['SPEED']);
         this.fuelPerMove = SPECS.UNITS[this.me.unit]['FUEL_PER_MOVE'];
     }
     
-    getPossibleMoves(){
-        var maxMove = SPECS.UNITS[this.me.unit]['SPEED'];
-        var ret = [];
-        for(var dx=0;dx*dx<=maxMove;dx++){
-            for(var dy=0;dy*dy<=maxMove;dy++){
-                if(dx==0&&dy==0)
-                    continue;
-                if(dx*dx+dy*dy<=maxMove){
-                    ret.push([dx,dy]);
-                    ret.push([-dx,-dy]);
-                    if(dx!=0){
-                        ret.push([-dx,dy]);
-                    }
-                    if(dy!=0){
-                        ret.push([dx,-dy]);
-                    }
-                }
-            }
-        }
-        return ret;
-    }
-
     //weights: how much to weight turns saved vs. fuel efficiency
     navTo(target,weights,safe){
         var best = [];

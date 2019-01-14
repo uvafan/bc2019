@@ -20,8 +20,8 @@ export class CombatUnit extends Robot{
                 var locb = r.signal&((1<<14)-1);
                 if(locb&(1<<12)){
                     this.attacking = false;
-                    this.target = this.getLocFromBroadcast(locb^(1<<12));
-                    this.target = this.stepTowards(this.target,this.reflect(r.x,r.y),3);
+                    var protectLoc = this.getLocFromBroadcast(locb^(1<<12));
+                    this.target = this.stepTowards(protectLoc,this.reflect(r.x,r.y),3);
                     //this.log('T '+this.target);
                 }
                 else{
@@ -51,7 +51,7 @@ export class CombatUnit extends Robot{
             }
         }
         var best = loc;
-        var bestDist = this.manhattan(loc[0],loc[1],to[0],to[1]);
+        var bestDist = this.distBtwnP(loc[0],loc[1],to[0],to[1]);
         var q = [[loc[0],loc[1]]];
         while(q.length>0){
             var u = q.shift();
@@ -63,7 +63,7 @@ export class CombatUnit extends Robot{
                 var ny=y+move[1];
                 if(!this.isPassable(nx,ny)||dist[nx][ny]>-1)
                     continue;
-                var d = this.manhattan(nx,ny,to[0],to[1]);
+                var d = this.distBtwnP(nx,ny,to[0],to[1]);
                 if(d<bestDist){
                     bestDist=d;
                     best=[nx,ny];
@@ -88,9 +88,14 @@ export class CombatUnit extends Robot{
         if(this.attacking&&!this.stopChecks)
             this.moveOnToSecondaryIfNeeded();
         var nav_weights = (this.attacking?params.ATT_NAV_WEIGHTS:params.DEF_NAV_WEIGHTS);
-        if(this.manhattan(this.target[0],this.target[1],this.me.x,this.me.y)>1)
+        if(!this.reachedTarget())
             return this.navTo(this.target,nav_weights,true);
         return null;
+    }
+
+    reachedTarget(){
+        var d = this.distBtwnP(this.target[0],this.target[1],this.me.x,this.me.y);
+        return d==0 || (d<3&&this.visRobotMap[this.target[1]][this.target[0]]>0);
     }
 
     moveOnToSecondaryIfNeeded(){

@@ -8,6 +8,24 @@ export class Unit{
         this.adjMoves = [[-1,0],[1,0],[0,-1],[0,1]];
         this.adjDiagMoves = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
     }
+    
+    getDxDyWithin(min,max){
+        var ret = [];
+        for(var dx=0;dx*dx<=max;dx++){
+            for(var dy=0;dy*dy<=max;dy++){
+                if(dx*dx+dy*dy<=max&&dx*dx+dy*dy>=min){
+                    ret.push([dx,dy]);
+                    if(dx>0||dy>0)
+                        ret.push([-dx,-dy]);
+                    if(dx>0 && dy>0){
+                        ret.push([-dx,dy]);
+                        ret.push([dx,-dy]);
+                    }
+                }
+            }
+        }
+        return ret;
+    }
 
     turn(rc){
         this.updateInfo(rc);
