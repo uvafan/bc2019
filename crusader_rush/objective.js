@@ -63,7 +63,7 @@ export class gatherKarb extends Objective {
         if(this.assignees.length)
             return 0;
         var karbNeeded = (karb*5>fuel?0:1);
-        var distScore = Math.max(200-this.distFromMe*this.distFromMe,.5);
+        var distScore = Math.max(200-this.distFromMe*this.distFromMe,1);
         return distScore/(karbNeeded?1:2);
     }
 }
@@ -79,8 +79,8 @@ export class gatherFuel extends Objective {
     getPriorityStratAgnostic(karb,fuel){
         if(this.assignees.length)
             return 0;
-        var karbNeeded = (karb*5>fuel?0:1);
-        var distScore = Math.max(200-this.distFromMe*this.distFromMe,.5);
+        var karbNeeded = (karb*7>fuel?0:1);
+        var distScore = Math.max(200-this.distFromMe*this.distFromMe*2,1);
         return distScore/(karbNeeded?2:1);
     }
 }
@@ -137,7 +137,7 @@ export class defendCastle extends Objective {
 
     getPriorityStratAgnostic(karb,fuel){
         var numDefenders = this.assignees.length;
-        return Math.max(225-this.distFromEnemy-numDefenders*20,1);
+        return Math.max(200-this.distFromEnemy*2-numDefenders*10,1);
     }
 }
 

@@ -110,9 +110,11 @@ export class CombatUnit extends Robot{
 
     moveOnToSecondaryIfNeeded(){
         if(this.targetDead()){
-            this.log('td '+this.target);
+            //this.log('td '+this.target);
+            //this.log('sd '+this.secondaryTarget);
             if(this.target[0]==this.secondaryTarget[0]&&this.target[1]==this.secondaryTarget[1]){
                 this.stopChecks=true;
+                //this.log('hi');
             }
             this.updateTarget(this.secondaryTarget);
             this.castleDead=true;

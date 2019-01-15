@@ -20,10 +20,6 @@ export class Castle extends Structure{
         this.getInitialStrategy();
     }
 
-    getInitialStrategy(){
-        this.strat = new strategies.DefendCastlesProphetPreacher(this);
-    }
-
     turn(rc){
         super.turn(rc);
         this.processCastleTalk();
@@ -87,6 +83,10 @@ export class Castle extends Structure{
         }
         this.log(ret.objInfo()+' p:'+highestP);
         return ret;
+    }
+
+    getInitialStrategy(){
+        this.strat = new strategies.crusaderRush(this);
     }
 
     initializeAttackObjectives(){

@@ -10,13 +10,6 @@ export class Robot extends Unit{
         this.splash = this.getDxDyWithin(0,2);
     }
 
-    turn(rc){
-        super.turn(rc);
-        if(this.me.turn%10==0){
-            this.updateTarget(this.target);
-        }
-    }
-
     updateTarget(target){
         this.target=target;
         this.targetDists = this.runBFS(target);
@@ -47,7 +40,7 @@ export class Robot extends Unit{
                 var move = this.possibleMoves[i];
                 var nx = x+move[0];
                 var ny = y+move[1];
-                if(!this.isWalkable(nx,ny)||dist[nx][ny]<=dist[x][y]+1)
+                if(!this.isPassable(nx,ny)||dist[nx][ny]<=dist[x][y]+1)
                     continue;
                 dist[nx][ny]=dist[x][y]+1;
                 q.push([nx,ny]);

@@ -21,7 +21,7 @@ export class Castle extends Structure{
     }
 
     getInitialStrategy(){
-        this.strat = new strategies.DefendCastlesProphetPreacher(this);
+        this.strat = new strategies.ProphetRush(this);
     }
 
     turn(rc){

@@ -7,7 +7,6 @@ export class Unit{
         this.me = rc.me;
         this.adjMoves = [[-1,0],[1,0],[0,-1],[0,1]];
         this.adjDiagMoves = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
-        this.visRobotMap = this.rc.getVisibleRobotMap();
     }
     
     getDxDyWithin(min,max){

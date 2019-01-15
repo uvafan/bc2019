@@ -108,14 +108,14 @@ export class DefendCastlesPreacher extends DefendCastles {
 export class DefendCastlesProphetPreacher extends DefendCastles {
     constructor(){
         super();
-        this.defenseComp = [0,0,0,0,3,2];
+        this.defenseComp = [0,0,0,0,2,3];
     }
 
     objWeights(round){
         if(round>params.DEFENDERS_ATTACK_ROUND)
             return [0,0,0,1,0];
         else if(round>10)
-            return [1,1,0,0,1];
+            return [1.1,1,0,0,1];
         return [1,0,0,0,1];
     }
 }
@@ -133,7 +133,7 @@ export class prophetRush extends Rush {
 }
 
 export class crusaderRush extends Rush {
-    unitNeeded(obj,round){
+    getUnitNeeded(obj,round){
         return SPECS['CRUSADER'];
     }
 }
