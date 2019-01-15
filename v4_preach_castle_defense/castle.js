@@ -74,7 +74,6 @@ export class Castle extends Structure{
         for(var i=0;i<this.objectives.length;i++){
             var obj=this.objectives[i];
             var p = obj.getPriority(this.strat,this.rc.karbonite,this.rc.fuel);
-            //this.log(obj.objInfo()+' p: '+p);
             if(p>highestP){
                 this.lastObjIdx = i;
                 ret=obj;
@@ -86,7 +85,7 @@ export class Castle extends Structure{
     }
 
     getInitialStrategy(){
-        this.strat = new strategies.DefendCastlesProphetPreacher(this);
+        this.strat = new strategies.DefendCastles();
     }
 
     initializeAttackObjectives(){
@@ -193,7 +192,7 @@ export class Castle extends Structure{
                 ids.push(r.id);
                 if(r.x != null && r.unit != SPECS['CASTLE']){
                     if(!this.lastIds.includes(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16){ 
-                        this.objectives[this.lastObjIdx].assign(r.id,r.unit);
+                        this.objectives[this.lastObjIdx].assign(r.id);
                     }
                 }
             }
@@ -249,4 +248,29 @@ export class Castle extends Structure{
         }
     }*/
 
+    /*
+    determineUnitNeeded(){
+        if(this.me.turn==1)
+            return SPECS['PILGRIM'];
+        else if(this.me.turn<4)
+            return SPECS['CRUSADER'];
+        else{
+            //this.log(this.unitCounts);
+            //this.log(this.desiredUnitComp);
+            var bestUnit = -1;
+            var bestRatio = Number.MAX_SAFE_INTEGER;
+            for(var i=0;i<6;i++){
+                if(this.desiredUnitComp[i]==0)
+                    continue;
+                var ratio = this.unitCounts[i]/this.desiredUnitComp[i];
+                //this.log('i '+i+' ratio '+ratio);
+                if(ratio<bestRatio){
+                    bestRatio=ratio;
+                    bestUnit=i;
+                }
+            }
+           // this.log('bestUnit '+bestUnit);
+            return bestUnit;
+        }
+    }*/
 }

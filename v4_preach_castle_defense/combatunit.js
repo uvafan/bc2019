@@ -1,4 +1,4 @@
-import {Robot} from 'myrobot.js'; 
+import {Robot} from 'myrobot.js';
 import {SPECS} from 'battlecode'; 
 import * as params from 'params.js';
 export class CombatUnit extends Robot{
@@ -32,9 +32,7 @@ export class CombatUnit extends Robot{
                     else{
                         target = this.getLocFromBroadcast(locb^(1<<12));
                     }
-                    var defensiveDistance = (this.me.unit==SPECS['PROPHET']?params.DEFENSIVE_PROPHET_DISTANCE:params.DEFENSIVE_PREACHER_DISTANCE);
-                    this.updateTarget(this.stepTowards(target,this.reflect(r.x,r.y),defensiveDistance));
-                    //this.log('T '+this.target);
+                    this.updateTarget(this.stepTowards(target,this.reflect(r.x,r.y),params.DEFENSIVE_DISTANCE));
                 }
                 else{
                     var oppCastleAlive = true;
@@ -61,7 +59,7 @@ export class CombatUnit extends Robot{
             }
         }
         var best = loc;
-        var bestDist = this.distBtwnP(loc[0],loc[1],to[0],to[1]);
+        var bestDist = this.manhattan(loc[0],loc[1],to[0],to[1]);
         var q = [[loc[0],loc[1]]];
         while(q.length>0){
             var u = q.shift();
@@ -73,8 +71,7 @@ export class CombatUnit extends Robot{
                 var ny=y+move[1];
                 if(!this.isPassable(nx,ny)||dist[nx][ny]>-1)
                     continue;
-                var d = this.distBtwnP(nx,ny,to[0],to[1]);
-                //this.log('nx '+nx+' ny '+ny+' dist '+d);
+                var d = this.manhattan(nx,ny,to[0],to[1]);
                 if(d<bestDist){
                     bestDist=d;
                     best=[nx,ny];
@@ -110,7 +107,6 @@ export class CombatUnit extends Robot{
 
     moveOnToSecondaryIfNeeded(){
         if(this.targetDead()){
-            this.log('hi');
             if(this.target==this.secondaryTarget){
                 this.stopChecks=true;
             }
@@ -123,7 +119,7 @@ export class CombatUnit extends Robot{
         var id = this.visRobotMap[this.target[1]][this.target[0]];
         if(id==0)
             return true;
-        return id>0 && this.rc.getRobot(id).team==this.me.team;
+        return id>0 && this.rc.getRobot(id).team!=this.me.team;
     }
 
     attackEnemy(){

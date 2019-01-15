@@ -10,7 +10,6 @@ export class Objective {
         this.th = th;
         this.assignees=[];
         this.assigneesToTarg={};
-        this.assigneesToUnit={};
         this.targNum=0;
     }
 
@@ -28,25 +27,22 @@ export class Objective {
 
     updateAssignees(idsAlive){
         var newAssignees=[];
-        this.unitCounts = [0,0,0,0,0,0];
         for(var i=0;i<this.assignees.length;i++){
             var a = this.assignees[i];
             if(idsAlive.includes(a)){
                 newAssignees.push(a);
-                this.unitCounts[this.assigneesToUnit[a]]++;
             }
         }
         this.assignees = newAssignees;
     }
 
-    assign(id,unit){
+    assign(id){
         this.assignees.push(id);
         this.assigneesToTarg[id]=this.targNum;
-        this.assigneesToUnit[id]=unit;
     }
 
     unitNeeded(strat){
-        return strat.getUnitNeeded(this,this.round);
+        return strat.getUnitNeeded(this.type,this.round);
     }
 
 }
@@ -112,8 +108,6 @@ export class attackEnemy extends Objective {
     }
 
     processFoundDead(id,ecl){
-        if(!this.assignees.includes(id))
-            return false;
         this.assigneesToTarg[id]++;
         if(this.assigneesToTarg[id]>this.targNum){
             this.targNum++;
@@ -134,7 +128,7 @@ export class defendCastle extends Objective {
     }
 
     getPriorityStratAgnostic(karb,fuel){
-        return Math.max(10-this.assignees.length,1);
+        return 10-this.assignees.length;
     }
 }
 

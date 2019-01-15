@@ -19,15 +19,13 @@ export class Strategy {
     determineUnitNeeded(unitCounts,desiredComp){
         var bestUnit = -1;
         var bestRatio = Number.MAX_SAFE_INTEGER;
-        var highestNum = -1;
         for(var i=0;i<6;i++){
             if(desiredComp[i]==0)
                 continue;
             var ratio = unitCounts[i]/desiredComp[i];
-            if(ratio<bestRatio||(ratio==bestRatio&&desiredComp[i]>highestNum)){
+            if(ratio<bestRatio){
                 bestRatio=ratio;
                 bestUnit=i;
-                highestNum=desiredComp[i];
             }
         }
         return bestUnit;

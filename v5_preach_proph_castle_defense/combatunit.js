@@ -110,7 +110,6 @@ export class CombatUnit extends Robot{
 
     moveOnToSecondaryIfNeeded(){
         if(this.targetDead()){
-            this.log('hi');
             if(this.target==this.secondaryTarget){
                 this.stopChecks=true;
             }
@@ -123,7 +122,7 @@ export class CombatUnit extends Robot{
         var id = this.visRobotMap[this.target[1]][this.target[0]];
         if(id==0)
             return true;
-        return id>0 && this.rc.getRobot(id).team==this.me.team;
+        return id>0 && this.rc.getRobot(id).team!=this.me.team;
     }
 
     attackEnemy(){
