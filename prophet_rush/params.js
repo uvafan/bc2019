@@ -1,6 +1,6 @@
 import {SPECS} from 'battlecode'; 
 
-export var DEBUG=true;
+export var DEBUG=false;
 
 export var DEFENDERS_ATTACK_ROUND=75;
 export var DEFENSIVE_PROPHET_DISTANCE=4;

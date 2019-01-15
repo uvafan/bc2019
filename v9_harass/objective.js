@@ -152,7 +152,7 @@ export class harassPilgrim extends Objective {
 
     getPriorityStratAgnostic(karb,fuel){
         //this.log('dfm '+this.distFromEnemy);
-        if(this.distFromEnemy<20)
+        if(this.distFromEnemy<10)
             return 0;
         var p = Math.max(3-this.assignees.length-this.distFromMe/100,1)
         //this.log('p '+p);

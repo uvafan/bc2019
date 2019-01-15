@@ -141,5 +141,15 @@ export class defendCastle extends Objective {
     }
 }
 
+export class harassPilgrim extends Objective {
+    constructor(r,tar,th,dfm,dfe){
+        super(r,tar,th);
+        this.distFromMe = dfm;
+        this.distFromEnemy=dfe;
+    }
 
+    getPriorityStratAgnostic(karb,fuel){
+        return (this.assignees.length?0:150);
+    }
+}
 
