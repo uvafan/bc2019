@@ -1,9 +1,9 @@
 import {SPECS} from 'battlecode'; 
 
-export var DEBUG=false;
+export var DEBUG=true;
 
 //defense stuff
-export var DEFENDERS_ATTACK_ROUND=700;
+export var DEFENDERS_ATTACK_ROUND=10000;
 export var DEFENSIVE_PROPHET_DISTANCE=5;
 export var DEFENSIVE_PREACHER_DISTANCE=5;
 
@@ -16,3 +16,5 @@ export var ATT_NAV_WEIGHTS=[10,1,0];
 export var PILGRIM_NAV_WEIGHTS=[10,1,0];
 
 export var STOP_PENALTY=3;
+
+export var MINING_DISTANCE=75;
