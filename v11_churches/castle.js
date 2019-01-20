@@ -38,7 +38,6 @@ export class Castle extends Structure{
         }
         for(var i=0;i<this.otherCastleLocs.length;i++){
             var dist = this.distBtwnP(x,y,this.otherCastleLocs[i][0],this.otherCastleLocs[i][1]);
-            //this.log('td '+dist);
             if(dist<minDist)
                 minDist=dist;
         }

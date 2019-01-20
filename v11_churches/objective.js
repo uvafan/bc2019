@@ -12,9 +12,9 @@ export class Objective {
         this.assigneesToTarg={};
         this.assigneesToUnit={};
         this.targNum=0;
+        this.isCastle = th.me.unit==SPECS['CASTLE'];
     }
-
-    log(s){
+log(s){
         this.th.log(s);
     }
 
@@ -129,16 +129,16 @@ export class attackEnemy extends Objective {
 export class defendCastle extends Objective {
     constructor(r,tar,th,dfe){
         super(r,tar,th);
-        this.distFromEnemy = dfe;
+        this.manDistFromEnemy = dfe;
         this.typeStr = 'DEFEND_CASTLE';
         this.type=4;
     }
 
     getPriorityStratAgnostic(karb,fuel){
-        //var numDefenders = this.assignees.length;
         //return Math.max(230-this.distFromEnemy-numDefenders*15,1);
-        var enemiesInSight = this.th.getNumEnemiesInSight();
-        return Math.max(enemiesInSight*100,1);
+        var numDefenders = this.assignees.length;
+        var enemiesInSight = this.th.getEnemiesInSight();
+        return Math.max(30-this.distFromEnemy-numDefenders+(this.isCastle?3:0),Math.max(enemiesInSight.length*100,1));
     }
 }
 
