@@ -158,13 +158,14 @@ export class Unit{
         return ret;
     }
 
-    getNumEnemiesInSight(){
+    getEnemiesInSight(){
         var visRobots = this.rc.getVisibleRobots();
-        var ret=0;
+        var ret= [];
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];
-            if(r.x!=null && r.team!=this.me.team)
-                ret++;
+            if(r.x!=null && r.team!=this.me.team){
+                ret.push(r);
+            }
         }
         return ret;
     }

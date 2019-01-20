@@ -146,11 +146,11 @@ export class EcoDefense extends Strategy {
     //[GATHER_KARB,GATHER_FUEL,DEFEND_PILGRIM,ATTACK_ENEMY,DEFEND_CASTLE,HARASS_PILGRIM,BUILD_CHURCH]
     objWeights(round){
         var w = [1,1,0,0,1,0,1];
-        if(this.th.me.unit==SPECS['CHURCH']){
+        if(this.th.me.unit==SPECS['CHURCH']||round<4){
             w[6]=0;
         }
         if(round<10&&this.th.me.unit==SPECS['CASTLE'])
-            w[1]=0;
+            w[1]=0.3;
         return w;
     }
 

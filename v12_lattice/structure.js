@@ -10,6 +10,7 @@ export class Structure extends Unit{
         super(rc);
         this.lastObjIdx = -1;
         this.objectives = [];
+        this.lastIds = [];
         this.enemyCastleLocs = [];
         if(this.me.unit==SPECS['CASTLE']){
             this.enemyCastleLocs.push(this.reflect(this.me.x,this.me.y));
@@ -33,8 +34,18 @@ export class Structure extends Unit{
         var priority = obj.getPriority(this.strat,this.rc.karbonite,this.rc.fuel); 
         var info = this.getUnitTargetAndBroadcast(obj);
         if(this.shouldBuild(priority,info[0])){
-            if(obj.type==6){
+            if(obj.typeStr=='BUILD_CHURCH'){
                 this.buildChurchObjStuff(obj);
+                if(!this.hasChurchRights(obj.target[0],obj.target[1])){
+                    var newObjs=[];
+                    for(var i=0;i<this.objectives.length;i++){
+                        if(this.objectives[i].type==obj.type&&this.objectives[i].target[0]==obj.target[0]&&this.objectives[i].target[1]==obj.target[1])
+                            continue;
+                        newObjs.push(this.objectives[i]);
+                    }
+                    this.objectives=newObjs;
+                    return null;
+                }
                 var info = this.getUnitTargetAndBroadcast(obj);
             }
             build = this.buildUnit(info[0],info[1],info[2]);
@@ -51,19 +62,37 @@ export class Structure extends Unit{
         var karbLeft = this.rc.karbonite-SPECS.UNITS[unit].CONSTRUCTION_KARBONITE;
         var fuelLeft = this.rc.fuel-SPECS.UNITS[unit].CONSTRUCTION_FUEL;
         if(this.me.unit==SPECS['CASTLE']){
-            var maxFuelSave = 200+this.me.turn*5;
-            var maxKarbSave = 50+this.me.turn/2;
+            var maxFuelSave = params.MIN_FUEL_SAVE+this.me.turn*params.FUEL_SAVE_ROUND_MULTIPLIER;
+            var maxKarbSave = params.MIN_KARB_SAVE+this.me.turn*params.KARB_SAVE_ROUND_MULTIPLIER;
         }
         else{
-            var maxFuelSave = 200+(this.me.turn+50)*5;
-            var maxKarbSave = 50+(this.me.turn+50)/2;
+            var maxFuelSave = params.MIN_FUEL_SAVE+(this.me.turn+50)*params.FUEL_SAVE_ROUND_MULTIPLIER;
+            var maxKarbSave = params.MIN_KARB_SAVE+(this.me.turn+50)*params.KARB_SAVE_ROUND_MULTIPLIER;
         }
         var fuelSave = maxFuelSave*(101-priority)/100;
         var karbSave = maxKarbSave*(101-priority)/100;
         return fuelSave<fuelLeft && karbSave<karbLeft;
     }
 
+    hasChurchRights(x,y){
+        var minDist = Number.MAX_SAFE_INTEGER;
+        var myDist = this.distBtwnP(x,y,this.me.x,this.me.y);
+        var idx=0;
+        for(var i=0;i<this.otherCastleLocs.length;i++){
+            var dist = this.distBtwnP(x,y,this.otherCastleLocs[i][0],this.otherCastleLocs[i][1]);
+            if(dist<minDist){
+                minDist=dist;
+                idx=i;
+            }
+        }
+        //this.log('myDist = '+myDist+' minDist = '+minDist+' ocl '+this.otherCastleLocs+ 'x '+x+' y '+y);
+        return myDist<minDist || (myDist==minDist&&(this.myCastleNum==0||(this.myCastleNum==1&&idx==1)));
+    }
+
     getUnitTargetAndBroadcast(obj){
+        if(obj.typeStr=='DEFEND_CASTLE'){
+            obj.updateTarget();
+        }
         var unit = obj.unitNeeded(this.strat);
         var target = obj.target;
         var broadcast = this.getBroadcast(obj);
@@ -87,7 +116,7 @@ export class Structure extends Unit{
                 return this.getBroadcastFromLoc(this.enemyCastleLocs[0])+offset+oppAliveOffset;
         }
         else if(obj.type==4){
-            return this.me.turn+(1<<12)+(1<<13)+offset;
+            return this.getBroadcastFromLoc(obj.target)+(1<<12)+(1<<13)+offset;
         }
         else if(obj.type==5){
             return this.getBroadcastFromLoc(obj.target)+offset+(1<<14);

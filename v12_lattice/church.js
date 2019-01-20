@@ -5,11 +5,9 @@ import * as params from 'params.js';
 export class Church extends Structure{
     turn(rc){
         super.turn(rc);
+        this.processVision();
         var obj = this.getHighestPriorityObjective();
         var build = this.buildIfShould(obj);
-        if(build){
-            obj.assign(0);
-        }
         return build;
     }
 
@@ -22,6 +20,26 @@ export class Church extends Structure{
                 var locb = r.signal&((1<<14)-1);
                 this.enemyCastleLocs.push(this.getLocFromBroadcast(locb));
             }
+        }
+    }
+
+    processVision(){
+        var visRobots = this.rc.getVisibleRobots();
+        var ids = [];
+        for(var i=0;i<visRobots.length;i++){
+            var r = visRobots[i];
+            if(r.x != null && r.team==this.me.team){
+                ids.push(r.id);
+                if(r.x != null && r.unit != SPECS['CHURCH']){
+                    if(!this.lastIds.includes(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16 && this.lastObjIdx>-1){ 
+                        this.objectives[this.lastObjIdx].assign(r.id,r.unit);
+                    }
+                }
+            }
+        }
+        this.lastIds = ids;
+        for(var i=0;i<this.objectives.length;i++){
+            this.objectives[i].updateAssignees(ids);
         }
     }
 }

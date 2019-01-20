@@ -24,15 +24,17 @@ export class CombatUnit extends Robot{
                     this.attacking = false;
                     var target;
                     if(locb&(1<<13)){
-                        target = [r.x,r.y];
-                        var currentRound = locb^((1<<12)+(1<<13));
-                        this.switchTurn = params.DEFENDERS_ATTACK_ROUND-currentRound;
+                        //var currentRound = locb^((1<<12)+(1<<13));
+                        //this.switchTurn = params.DEFENDERS_ATTACK_ROUND-currentRound;
+                        target = this.getLocFromBroadcast(locb^((1<<12)+(1<<13)));
+                        this.switchTurn=1001;
                     }
                     else{
                         target = this.getLocFromBroadcast(locb^(1<<12));
                     }
                     var defensiveDistance = (this.me.unit==SPECS['PROPHET']?params.DEFENSIVE_PROPHET_DISTANCE:params.DEFENSIVE_PREACHER_DISTANCE);
-                    this.updateTarget(this.stepTowards(target,this.reflect(r.x,r.y),defensiveDistance));
+                    this.updateTarget(target);
+                    //this.updateTarget(this.stepTowards(target,this.reflect(r.x,r.y),defensiveDistance));
                     //this.log('T '+this.target);
                 }
                 else if(locb&(1<<14)){

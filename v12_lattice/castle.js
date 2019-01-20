@@ -9,7 +9,6 @@ export class Castle extends Structure{
         super(rc);
         this.otherCastleLocsInitial = {};
         this.otherCastleLocs = []; 
-        this.lastIds = [];
     }
 
     turn(rc){
@@ -38,7 +37,6 @@ export class Castle extends Structure{
         }
         for(var i=0;i<this.otherCastleLocs.length;i++){
             var dist = this.distBtwnP(x,y,this.otherCastleLocs[i][0],this.otherCastleLocs[i][1]);
-            //this.log('td '+dist);
             if(dist<minDist)
                 minDist=dist;
         }
@@ -51,7 +49,7 @@ export class Castle extends Structure{
         //this.log('hi2 '+this.objectives[0].objInfo());
         for(var i=0;i<this.objectives.length;i++){
             var obj = this.objectives[i];
-            if(obj.type>1&&obj.type<6){
+            if(obj.type>1){
                 newObjs.push(obj);
             }
             else{

@@ -1,7 +1,5 @@
 import {SPECS} from 'battlecode'; 
-import * as strategies from 'strategy.js';
-import * as params from 'params.js';
-
+import * as strategies from 'strategy.js'; import * as params from 'params.js'; 
 
 export class Objective {
     constructor(r,tar,th){
@@ -12,9 +10,9 @@ export class Objective {
         this.assigneesToTarg={};
         this.assigneesToUnit={};
         this.targNum=0;
+        this.isCastle = th.me.unit==SPECS['CASTLE'];
     }
-
-    log(s){
+log(s){
         this.th.log(s);
     }
 
@@ -129,17 +127,116 @@ export class attackEnemy extends Objective {
 export class defendCastle extends Objective {
     constructor(r,tar,th,dfe){
         super(r,tar,th);
-        this.distFromEnemy = dfe;
+        this.defenseLoc = this.target;
+        this.manDistFromEnemy = dfe;
         this.typeStr = 'DEFEND_CASTLE';
         this.type=4;
+        this.initializeDefenseSpots();
+        this.assigneeToIdx={};
+        this.eLoc = this.th.reflect(this.th.me.x,this.th.me.y);
     }
 
     getPriorityStratAgnostic(karb,fuel){
-        //var numDefenders = this.assignees.length;
         //return Math.max(230-this.distFromEnemy-numDefenders*15,1);
-        var enemiesInSight = this.th.getNumEnemiesInSight();
-        return Math.max(enemiesInSight*100,1);
+        var numDefenders = this.assignees.length;
+        var enemiesInSight = this.th.getEnemiesInSight();
+        return Math.max(20-this.manDistFromEnemy/3-numDefenders+(this.isCastle?3:0),Math.max(enemiesInSight.length*100,1));
     }
+
+    initializeDefenseSpots(){
+        var dist = [];
+        for(var x=0;x<this.th.mapSize;x++){
+            dist.push([]);
+            for(var y=0;y<this.th.mapSize;y++){
+                dist[x].push(Number.MIN_SAFE_INTEGER);
+            }
+        }
+        var q = [[this.defenseLoc[0],this.defenseLoc[1]]];
+        dist[this.defenseLoc[0]][this.defenseLoc[1]]=0;
+        var latticeMoves = [[1,1],[1,-1],[-1,1],[-1,-1]];
+        this.defenseSpots = [];
+        this.spotTaken=[];
+        while(q.length>0){
+            var u = q.shift();
+            var x=u[0];
+            var y=u[1];
+            for(var i=0;i<4;i++){
+                var nx=x+latticeMoves[i][0];
+                var ny=y+latticeMoves[i][1];
+                if(this.th.offMap(nx,ny)||dist[nx][ny]>-1||(!this.isCastle&&this.th.distBtwnP(this.defenseLoc[0],this.defenseLoc[1],nx,ny)>100))
+                    continue;
+                dist[nx][ny]=dist[x][y]+1;
+                if(!this.th.rc.karbonite_map[ny][nx]&&!this.th.rc.fuel_map[ny][nx]&&this.th.isPassable(nx,ny)){
+                    this.defenseSpots.push([nx,ny]);
+                    this.spotTaken.push(false);
+                }
+                q.push([nx,ny]);
+            }
+        }
+    }
+
+    updateTarget(){
+        var candidates = 0;
+        var bestScore = Number.MIN_SAFE_INTEGER;
+        var enemyLoc = this.eLoc;
+        var enemiesInSight = this.th.getEnemiesInSight();
+        if(enemiesInSight.length>0){
+            var minDist = Number.MAX_SAFE_INTEGER;
+            for(var i=0;i<enemiesInSight.length;i++){
+                var d = this.th.distBtwnP(enemiesInSight[i].x,enemiesInSight[i].y,this.defenseLoc[0],this.defenseLoc[1]);
+                if(d<minDist){
+                    enemyLoc = [enemiesInSight[i].x,enemiesInSight[i].y];
+                    minDist=d;
+                }
+            }
+        }
+        this.targetIdx = 20;
+        var dte = this.th.distBtwnP(enemyLoc[0],enemyLoc[1],this.defenseLoc[0],this.defenseLoc[1]);
+        for(var i=0;i<this.spotTaken.length;i++){
+            if(this.spotTaken[i])
+                continue;
+            var loc = this.defenseSpots[i];
+            var d = this.th.distBtwnP(enemyLoc[0],enemyLoc[1],loc[0],loc[1]);
+            //this.log('loc ' + loc +' eloc '+enemyLoc+ ' d '+d);
+            if(this.unitNeeded(this.th.strat)==SPECS['PROPHET']&&d<SPECS.UNITS[SPECS['PROPHET']]['ATTACK_RADIUS'][0]){
+                continue; 
+            }
+            candidates++;
+            var differential = dte-d;
+            var dfm = this.th.distBtwnP(this.defenseLoc[0],this.defenseLoc[1],loc[0],loc[1]);
+            var score = ((differential>=0?1000:0)-dfm);
+            if(score>bestScore){
+                bestScore=score;
+                this.targetIdx=i;
+            }
+            if(candidates==params.LATTICE_CANDIDATES)
+                break;
+        }
+        this.target = this.defenseSpots[this.targetIdx];  
+    }
+
+    assign(id,unit){
+        super.assign(id,unit);
+        this.assigneeToIdx[id] = this.targetIdx;
+        this.spotTaken[this.targetIdx]=true;
+    }
+
+    /*takeInventory(){
+        for(var i=0;i<this.spotTaken.length;i++){
+            this.spotTaken[i]=(this.th.visRobotMap[this.defenseSpots[i][1]][this.defenseSpots[i][0]]>0);
+        }
+    }*/
+
+    updateAssignees(idsAlive){
+        super.updateAssignees(idsAlive);
+        for(var i=0;i<this.spotTaken.length;i++){
+            this.spotTaken[i]=false;
+        }
+        for(var i=0;i<this.assignees.length;i++){
+            this.spotTaken[this.assigneeToIdx[this.assignees[i]]]=true;
+        }
+    }
+
 }
 
 export class harassPilgrim extends Objective {
