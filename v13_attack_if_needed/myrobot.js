@@ -10,6 +10,13 @@ export class Robot extends Unit{
         this.splash = this.getDxDyWithin(0,2);
     }
 
+    turn(rc){
+        super.turn(rc);
+        if(this.me.turn%10==0){
+            this.updateTarget(this.target);
+        }
+    }
+
     updateTarget(target){
         this.target=target;
         this.targetDists = this.runBFS(target);
@@ -40,7 +47,7 @@ export class Robot extends Unit{
                 var move = this.possibleMoves[i];
                 var nx = x+move[0];
                 var ny = y+move[1];
-                if(!this.isPassable(nx,ny)||dist[nx][ny]<=dist[x][y]+1)
+                if(!this.isWalkable(nx,ny)||dist[nx][ny]<=dist[x][y]+1)
                     continue;
                 dist[nx][ny]=dist[x][y]+1;
                 q.push([nx,ny]);
@@ -50,7 +57,7 @@ export class Robot extends Unit{
     }
 
     //weights: [movement,fuel efficiency,splash resistance]
-    navTo(dists,dest,weights,safe){
+    navTo(dists,dest,weights,safe,standOn){
         var bestMove = null;
         var bestScore = Number.MIN_SAFE_INTEGER;
         for(var i=0;i<this.possibleMoves.length;i++){
@@ -64,6 +71,8 @@ export class Robot extends Unit{
                 continue;
             var turnsSaved = dists[this.me.x][this.me.y]-dists[nx][ny];
             var distRem = this.manhattan(nx,ny,dest[0],dest[1]);
+            if(distRem==0&&!standOn)
+                continue;
             var movementScore = turnsSaved*10-distRem;
             var splashBadness = this.getSplashBadness(nx,ny); 
             var score = movementScore*weights[0]-fuelUsed*weights[1]-splashBadness*weights[2];

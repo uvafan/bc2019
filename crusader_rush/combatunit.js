@@ -104,7 +104,7 @@ export class CombatUnit extends Robot{
             this.moveOnToSecondaryIfNeeded();
         var nav_weights = (this.attacking?params.ATT_NAV_WEIGHTS:params.DEF_NAV_WEIGHTS);
         //if(this.manhattan(this.target[0],this.target[1],this.me.x,this.me.y)>1)
-        return this.navTo(this.targetDists,this.target,nav_weights,true);
+        return this.navTo(this.targetDists,this.target,nav_weights,false);
         //return null;
     }
 
@@ -139,6 +139,7 @@ export class CombatUnit extends Robot{
             var distToR = th.distBtwn(th.me,r);
             if(th.attackRadius[0]>distToR||th.attackRadius[1]<distToR)
                 return;
+            //var score = (r.unit==SPECS['CASTLE']?1000:r.unit*100-distToR);
             var score = r.unit*100-distToR;
             if(score>bestScore){
                 bestScore = score;
