@@ -30,8 +30,9 @@ export class Castle extends Structure{
             this.rc.signal(signal,85*85);
             this.makeStuff=true;
         }
-        else if((this.unitCounts[SPECS['CASTLE']]<this.otherCastleLocs.length+1||this.rc.health<SPECS.UNITS[SPECS['CASTLE']]['STARTING_HP'])
+        else if(this.unitCounts[SPECS['CASTLE']]<this.otherCastleLocs.length+1
             && this.me.turn>=params.ATTACK_NOW && this.me.turn-params.ATTACK_NOW<this.enemyCastleLocs.length){
+            //this.log('sending');
             var roundsAfter = this.me.turn-params.ATTACK_NOW;
             signal=this.getBroadcastFromLoc(this.enemyCastleLocs[roundsAfter]);
             this.rc.signal(signal,85*85);
