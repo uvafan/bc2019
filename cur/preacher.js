@@ -23,8 +23,8 @@ export class Preacher extends CombatUnit{
         for(var i=0;i<this.attackOffsets.length;i++){
             var off = this.attackOffsets[i];
             var tile = [this.me.x+off[0],this.me.y+off[1]];
-            if(!this.isPassable(tile[0],tile[1]))
-                continue;
+            //if(!this.isPassable(tile[0],tile[1]))
+            //    continue;
             var score = this.scoreTile(off);
             if(score>bestScore){
                 bestScore = score;

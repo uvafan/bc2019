@@ -204,7 +204,7 @@ export class defendCastle extends Objective {
             var loc = this.defenseSpots[i];
             var d = this.th.distBtwnP(enemyLoc[0],enemyLoc[1],loc[0],loc[1]);
             //this.log('loc ' + loc +' eloc '+enemyLoc+ ' d '+d);
-            if(this.unitNeeded(this.th.strat)==SPECS['PROPHET']&&d<SPECS.UNITS[SPECS['PROPHET']]['ATTACK_RADIUS'][0]){
+            if(this.unitNeeded(this.th.strat)==SPECS['PROPHET']&&d<SPECS.UNITS[SPECS['PROPHET']]['ATTACK_RADIUS'][0]&&enemiesInSight.length>0){
                 continue; 
             }
             candidates++;

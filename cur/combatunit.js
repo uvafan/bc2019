@@ -122,32 +122,8 @@ export class CombatUnit extends Robot{
         var move = this.navTo(this.targetDists,this.target,nav_weights,true,true);
         if(move)
             return move;
-        return this.giveBack();
+        return this.giveBack(this.createdBy);
         //return null;
-    }
-
-    giveBack(){
-        var visRobots = this.rc.getVisibleRobots();
-        var minDist = Number.MAX_SAFE_INTEGER;
-        var dx=0;
-        var dy=0;
-        for(var i=0;i<visRobots.length;i++){
-            var r=visRobots[i];
-            if(r.team==this.me.team&&r.x){
-                var d=this.distBtwnP(r.x,r.y,this.me.x,this.me.y);
-                if(d<=2){
-                    var d2 = this.distBtwnP(this.createdBy[0],this.createdBy[1],r.x,r.y);
-                    if(d2<minDist){
-                        minDist=d2;
-                        dx=r.x-this.me.x;
-                        dy=r.y-this.me.y;
-                    }
-                }
-            }
-        }
-        if(dy||dx)
-            return this.rc.give(dx,dy,this.me.karbonite,this.me.fuel);
-        return null;
     }
 
     processSignals(){
