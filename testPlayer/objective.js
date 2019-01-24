@@ -1,5 +1,5 @@
-import {SPECS} from 'battlecode';
-import * as strategies from 'strategy.js'; import * as params from 'params.js';
+import {SPECS} from 'battlecode'; 
+import * as strategies from 'strategy.js'; import * as params from 'params.js'; 
 
 export class Objective {
     constructor(r,tar,th){
@@ -12,7 +12,7 @@ export class Objective {
         this.targNum=0;
         this.isCastle = th.me.unit==SPECS['CASTLE'];
     }
-
+    
     log(s){
         this.th.log(s);
     }
@@ -159,39 +159,17 @@ export class defendCastle extends Objective {
         }
         var q = [[this.defenseLoc[0],this.defenseLoc[1]]];
         dist[this.defenseLoc[0]][this.defenseLoc[1]]=0;
-        var moves = [[1,1],[1,-1],[-1,1],[-1,-1]];
+        var latticeMoves = [[1,1],[1,-1],[-1,1],[-1,-1]];
         this.defenseSpots = [];
         this.spotTaken=[];
-        var evenMoves = [[0,1],[0,-1],[1,0],[-1,0]];
-        var firstTurn = 1;
         while(q.length>0){
             var u = q.shift();
             var x=u[0];
             var y=u[1];
-            if(firstTurn == 1){
-                if((this.defenseLoc[0] + this.defenseLoc[1])%2 == 0){
-                    for(var i=0;i<evenMoves.length;i++){
-                        var nx=x+evenMoves[i][0];
-                        var ny=y+evenMoves[i][1];
-                        if(this.th.offMap(nx,ny)||dist[nx][ny]>-1||(!this.isCastle&&this.th.distBtwnP(this.defenseLoc[0],this.defenseLoc[1],nx,ny)>100)||(!params.USE_LATTICE && (this.defenseLoc[0] == nx || this.defenseLoc[1] == ny)) )
-                            continue;
-                        dist[nx][ny]=dist[x][y]+1;
-                        if(!this.th.rc.karbonite_map[ny][nx]&&!this.th.rc.fuel_map[ny][nx]&&this.th.isPassable(nx,ny)){
-                            this.defenseSpots.push([nx,ny]);
-                            this.spotTaken.push(false);
-                        }
-                        q.push([nx,ny]);
-                    }
-                    firstTurn = 0;
-                    continue;
-                }
-                firstTurn = 0;
-
-            }
-            for(var i=0;i<moves.length;i++){
-                var nx=x+moves[i][0];
-                var ny=y+moves[i][1];
-                if(this.th.offMap(nx,ny)||dist[nx][ny]>-1||(!this.isCastle&&this.th.distBtwnP(this.defenseLoc[0],this.defenseLoc[1],nx,ny)>100)||(!params.USE_LATTICE && (this.defenseLoc[0] == nx || this.defenseLoc[1] == ny)) )
+            for(var i=0;i<4;i++){
+                var nx=x+latticeMoves[i][0];
+                var ny=y+latticeMoves[i][1];
+                if(this.th.offMap(nx,ny)||dist[nx][ny]>-1||(!this.isCastle&&this.th.distBtwnP(this.defenseLoc[0],this.defenseLoc[1],nx,ny)>100))
                     continue;
                 dist[nx][ny]=dist[x][y]+1;
                 if(!this.th.rc.karbonite_map[ny][nx]&&!this.th.rc.fuel_map[ny][nx]&&this.th.isPassable(nx,ny)){
@@ -200,9 +178,7 @@ export class defendCastle extends Objective {
                 }
                 q.push([nx,ny]);
             }
-
         }
-
     }
 
     updateTarget(){
@@ -228,8 +204,8 @@ export class defendCastle extends Objective {
             var loc = this.defenseSpots[i];
             var d = this.th.distBtwnP(enemyLoc[0],enemyLoc[1],loc[0],loc[1]);
             //this.log('loc ' + loc +' eloc '+enemyLoc+ ' d '+d);
-            if(this.unitNeeded(this.th.strat)==SPECS['PROPHET']&&d<SPECS.UNITS[SPECS['PROPHET']]['ATTACK_RADIUS'][0]&&enemiesInSight.length>0){
-                continue;
+            if(this.unitNeeded(this.th.strat)==SPECS['PROPHET']&&d<SPECS.UNITS[SPECS['PROPHET']]['ATTACK_RADIUS'][0]){
+                continue; 
             }
             candidates++;
             var differential = dte-d;
@@ -242,7 +218,7 @@ export class defendCastle extends Objective {
             if(candidates==params.LATTICE_CANDIDATES)
                 break;
         }
-        this.target = this.defenseSpots[this.targetIdx];
+        this.target = this.defenseSpots[this.targetIdx];  
     }
 
     assign(id,unit){
@@ -275,7 +251,7 @@ export class harassPilgrim extends Objective {
         this.distFromEnemy=dfe;
         this.distFromMe=dfm;
         this.type=5;
-        this.typeStr = 'HARASS_PILGRIM';
+        this.typeStr = 'HARASS_PILGRIM'; 
     }
 
     getPriorityStratAgnostic(karb,fuel){

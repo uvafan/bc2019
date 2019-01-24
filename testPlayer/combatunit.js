@@ -1,5 +1,5 @@
-import {Robot} from 'myrobot.js';
-import {SPECS} from 'battlecode';
+import {Robot} from 'myrobot.js'; 
+import {SPECS} from 'battlecode'; 
 import * as params from 'params.js';
 export class CombatUnit extends Robot{
     constructor(rc){
@@ -13,7 +13,6 @@ export class CombatUnit extends Robot{
         this.getFirstTarget();
         this.prelimTrusted=[];
         this.trusted=[];
-        this.exploreDir = -1;
     }
 
     getFirstTarget(){
@@ -120,43 +119,35 @@ export class CombatUnit extends Robot{
             this.moveOnToSecondaryIfNeeded();
         var nav_weights = (this.attacking?params.ATT_NAV_WEIGHTS:params.DEF_NAV_WEIGHTS);
         //if(this.manhattan(this.target[0],this.target[1],this.me.x,this.me.y)>1)
-        if(!this.attacking && !this.isWalkable(this.target[0],this.target[1])){
-            this.pickBetterTarget();
-        }
         var move = this.navTo(this.targetDists,this.target,nav_weights,true,true);
         if(move)
             return move;
-        return this.giveBack(this.createdBy);
+        return this.giveBack();
         //return null;
     }
-    pickBetterTarget(){
-        var dist = this.getDxDyOddWithin(0,SPECS.UNITS[this.me.unit]['VISION_RADIUS'])
-        for(var i = 0; i < dist.length; i++){
-            var nx = this.target[0]+dist[i][0];
-            var ny = this.target[1]+dist[i][1];
-            if(!this.offMap(nx,ny) && !this.rc.karbonite_map[ny][nx] && !this.rc.fuel_map[ny][nx] && this.isWalkable(nx,ny)){
-                var newTarget = [nx,ny];
-                this.log("Switching from old target:")
-                this.log(this.target);
-                this.log("to new target");
-                this.log(newTarget);
-                this.updateTarget(newTarget);
-                return;
+
+    giveBack(){
+        var visRobots = this.rc.getVisibleRobots();
+        var minDist = Number.MAX_SAFE_INTEGER;
+        var dx=0;
+        var dy=0;
+        for(var i=0;i<visRobots.length;i++){
+            var r=visRobots[i];
+            if(r.team==this.me.team&&r.x){
+                var d=this.distBtwnP(r.x,r.y,this.me.x,this.me.y);
+                if(d<=2){
+                    var d2 = this.distBtwnP(this.createdBy[0],this.createdBy[1],r.x,r.y);
+                    if(d2<minDist){
+                        minDist=d2;
+                        dx=r.x-this.me.x;
+                        dy=r.y-this.me.y;
+                    }
+                }
             }
         }
-        if(this.exploreDir == -1){
-            this.exploreDir = Math.floor(Math.random()*4);
-        }
-        var moves = [[1,1],[1,-1],[-1,1],[-1,-1]];
-        var nx = this.target[0] + 3*moves[this.exploreDir][0];
-        var ny = this.target[1] + 3*moves[this.exploreDir][1];
-        while(this.offMap(nx,ny)){
-            this.exploreDir = Math.floor(Math.random()*4);
-            nx = this.target[0] + 3*moves[this.exploreDir][0];
-            ny = this.target[1] + 3*moves[this.exploreDir][1];
-        }
-        var newTarget = [nx,ny];
-        this.updateTarget(newTarget);
+        if(dy||dx)
+            return this.rc.give(dx,dy,this.me.karbonite,this.me.fuel);
+        return null;
     }
 
     processSignals(){
@@ -195,7 +186,7 @@ export class CombatUnit extends Robot{
                     }
                 }
             }
-        }
+        } 
     }
 
     moveOnToSecondaryIfNeeded(){

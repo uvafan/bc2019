@@ -33,5 +33,3 @@ export var MAKE_STUFF=900;
 export var RANDOM_ONE=22636;
 export var RANDOM_TWO=55580;
 export var MAKE_STUFF_SIGNAL=35782;
-
-export var USE_LATTICE=1;

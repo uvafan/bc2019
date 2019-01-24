@@ -29,26 +29,6 @@ export class Unit{
         }
         return ret;
     }
-    getDxDyOddWithin(min,max){
-        var ret = [];
-        for(var dx=0;dx*dx<=max;dx++){
-            for(var dy=0;dy*dy<=max;dy++){
-                if(dx*dx+dy*dy<=max&&dx*dx+dy*dy>=min){
-                    if((dx+dy)%2 == 0){
-                        ret.push([dx,dy]);
-                        if(dx>0||dy>0)
-                            ret.push([-dx,-dy]);
-                        if(dx>0 && dy>0){
-                            ret.push([-dx,dy]);
-                            ret.push([dx,-dy]);
-                        }
-                    }
-                }
-            }
-        }
-        ret.sort(function(a,b){return a[0]+a[1] - b[0] - b[1]});
-        return ret;
-    }
 
     turn(rc){
         this.updateInfo(rc);
