@@ -43,13 +43,23 @@ export class Unit{
     }
 
     sendCastleTalk(){
-        if((this.me.turn+this.offset)%2==0){
-            this.rc.castleTalk(this.me.unit+1);
+        var msg = 0;
+        if(this.me.turn==1){
+            msg=this.me.unit;
         }
-        else if((this.me.turn+this.offset)%2==1&&this.castleDead&&!this.everDefended){
+        else if((this.me.turn+this.offset)%2==0){
+            msg=this.me.x;
+        }
+        else if((this.me.turn+this.offset)%2==1){
+            msg=this.me.y;
             this.rc.castleTalk(2);
             this.castleDead=false;
         }
+        if(this.castleDead&&!this.everDefended){
+            msg+=(1<<6);
+            this.castleDead=false; 
+        }
+        this.rc.castleTalk(msg);
     }
 
     getBroadcastFromLoc(loc){

@@ -144,7 +144,7 @@ export class defendCastle extends Objective {
         var dangerScore = (enemiesInSight.length-numDefenders)*100;
         if(this.round<50&&this.isCastle){
             //return Math.max(40-this.manDistFromEnemy/2-numDefenders*10,Math.max(dangerScore,(this.isCastle?4:1)));
-            return dangerScore;
+            return Math.max(dangerScore,10-numDefenders);
         }
         else{
             return Math.max(40-this.manDistFromEnemy/5-numDefenders*2,Math.max(dangerScore,(this.isCastle?4:1)));

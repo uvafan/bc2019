@@ -149,7 +149,7 @@ export class EcoDefense extends Strategy {
         if(this.th.me.unit==SPECS['CHURCH']||round<3){
             w[6]=0;
         }
-        if(round<7&&this.th.me.unit==SPECS['CASTLE'])
+        if(round<15&&this.th.me.unit==SPECS['CASTLE'])
             w[1]=0.3;
         return w;
     }
