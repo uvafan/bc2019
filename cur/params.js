@@ -28,7 +28,7 @@ export var KARB_SAVE_ROUND_MULTIPLIER=0.5;
 //new defense stuff
 export var LATTICE_CANDIDATES=5;
 export var ATTACK_NOW=700;
-export var MAKE_STUFF=900;
+export var MAKE_STUFF=950;
 
 export var RANDOM_ONE=22636;
 export var RANDOM_TWO=55580;

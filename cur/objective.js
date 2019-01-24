@@ -141,11 +141,13 @@ export class defendCastle extends Objective {
         //return Math.max(230-this.distFromEnemy-numDefenders*15,1);
         var numDefenders = this.assignees.length;
         var enemiesInSight = this.th.getEnemiesInSight();
+        var dangerScore = (enemiesInSight.length-numDefenders)*100;
         if(this.round<50&&this.isCastle){
-            return Math.max(40-this.manDistFromEnemy/2-numDefenders*10,Math.max(enemiesInSight.length*100,(this.isCastle?4:1)));
+            //return Math.max(40-this.manDistFromEnemy/2-numDefenders*10,Math.max(dangerScore,(this.isCastle?4:1)));
+            return Math.max(dangerScore,10-numDefenders);
         }
         else{
-            return Math.max(40-this.manDistFromEnemy/5-numDefenders*2,Math.max(enemiesInSight.length*100,(this.isCastle?4:1)));
+            return Math.max(40-this.manDistFromEnemy/5-numDefenders*2,Math.max(dangerScore,(this.isCastle?4:1)));
         }
     }
 

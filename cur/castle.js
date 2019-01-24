@@ -9,6 +9,8 @@ export class Castle extends Structure{
         this.offset=0;
         this.otherCastleLocs = []; 
         this.unitCounts = [0,0,0,0,0,0];
+        this.idToUnit = {};
+        this.idToLoc = {};
         this.attacking=false;
     }
 
@@ -94,27 +96,31 @@ export class Castle extends Structure{
     }
 
     processCastleTalk(){
-        if(this.me.turn%2==0||this.me.turn==1){
-            this.newUnitCounts = [0,0,0,0,0,0];
-        }
+        this.unitCounts = [0,0,0,0,0,0];
         var visRobots = this.rc.getVisibleRobots();
         var ids = [];
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];
-            if(r.castle_talk != null && (r.team==null || r.team==this.me.team) && r.castle_talk<10){
-                if(this.me.turn%2==0&&r.castle_talk>0){
-                    this.newUnitCounts[r.castle_talk-1]++;
-                }
-                else if(this.me.turn%2==1&&r.castle_talk>0){
-                    //this.log('hi '+ this.objectives[0].objInfo());
+            if(r.castle_talk != null && (r.team==null || r.team==this.me.team) && !(r.castle_talk&(1<<7))){
+                ids.push(r.id);
+                var msg = r.castle_talk;
+                if(msg&(1<<6)){
+                    msg-=(1<<6);
                     if(this.objectives[0].processFoundDead(r.id,this.enemyCastleLocs)){
                         this.enemyCastleLocs.shift();
                     }
-                    else if(r.castle_talk==1){
-                        this.newUnitCounts[r.castle_talk-1]++;
-                    }
                 }
-                ids.push(r.id);
+                if(!(r.id in this.idToUnit)){
+                    this.idToUnit[r.id]=msg;
+                    this.idToLoc[r.id]=[-1,-1];
+                }
+                else if(this.me.turn%2==0){
+                    this.idToLoc[r.id][0]=msg;
+                }
+                else if(this.me.turn%2==1){
+                    this.idToLoc[r.id][1]=msg;
+                }
+                this.unitCounts[this.idToUnit[r.id]]++;
                 if(r.unit != null && r.unit != SPECS['CASTLE']){
                     if(!this.lastIds.includes(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16){ 
                         this.objectives[this.lastObjIdx].assign(r.id,r.unit);
@@ -122,9 +128,7 @@ export class Castle extends Structure{
                 }
             }
         }
-        if(this.me.turn%2==0){
-            this.strat.updateUnitCounts(this.unitCounts);
-        }
+        this.strat.updateUnitCounts(this.unitCounts);
         this.lastIds = ids;
         for(var i=0;i<this.objectives.length;i++){
             this.objectives[i].updateAssignees(ids);
@@ -132,36 +136,37 @@ export class Castle extends Structure{
         if(this.me.turn<4){
             this.castleTalkFirst3();
         }
-        if(this.me.turn%2==1){
-            this.unitCounts=this.newUnitCounts;
-        }
     }
 
     castleTalkFirst3(){
         if(this.me.turn==1)
-            this.rc.castleTalk(this.me.x+10);
+            this.rc.castleTalk(this.me.x+10+(1<<7));
         if(this.me.turn==2)
-            this.rc.castleTalk(this.me.y+10);
+            this.rc.castleTalk(this.me.y+10+(1<<7));
         var visRobots = this.rc.getVisibleRobots();
         if(this.me.turn==1)
             this.myCastleNum=0;
         for(var i=0;i<visRobots.length;i++){
             var r=visRobots[i];
-            if(r.castle_talk != null && r.castle_talk>0 && (r.team==null || r.team==this.me.team) && r.id!=this.me.id && r.castle_talk>9){
+            if(r.castle_talk != null && r.castle_talk>0 && (r.team==null || r.team==this.me.team) && r.id!=this.me.id && (r.castle_talk&(1<<7))){
+                var msg = r.castle_talk-(1<<7);
+                this.idToUnit[r.id]=0;
+                this.idToLoc[r.id]=[-1,-1];
                 if(!(r.id in this.otherCastleLocsInitial)){
-                    this.otherCastleLocsInitial[r.id] = [r.castle_talk-10,-1];
+                    this.otherCastleLocsInitial[r.id] = [msg-10,-1];
+                    this.idToLoc[r.id][0]=msg-10;
                     if(this.me.turn==1)
                         this.myCastleNum++;
                 }
                 else{
-                    this.otherCastleLocsInitial[r.id][1] = r.castle_talk-10;
+                    this.otherCastleLocsInitial[r.id][1] = msg-10;
+                    this.idToLoc[r.id][1]=msg-10;
                 }
             }
         }
         if(this.me.turn==3){
             for(var key in this.otherCastleLocsInitial){
                 var loc = this.otherCastleLocsInitial[key];
-                //this.log('loc = '+loc);
                 this.otherCastleLocs.push(loc);
                 this.enemyCastleLocs.push(this.reflect(loc[0],loc[1]));
             }
