@@ -3,3 +3,4 @@ compiled_bot*.js
 *.swp
 *.txt
 *.out
+*.log
