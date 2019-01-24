@@ -261,7 +261,7 @@ export class Structure extends Unit{
 
     getChurchLoc(cluster){
         var c = this.centroid(cluster);
-        if(this.rc.karbonite_map[c[1]][c[0]]||this.rc.fuel_map[c[1]][c[0]]){
+        if(this.rc.karbonite_map[c[1]][c[0]]||this.rc.fuel_map[c[1]][c[0]]||!this.isPassable(c[0],c[1])){
             for(var i=0;i<this.adjDiagMoves.length;i++){
                 var nc = [c[0]+this.adjDiagMoves[i][0],c[1]+this.adjDiagMoves[i][1]];
                 if(this.isPassable(nc[0],nc[1])&&!this.rc.karbonite_map[nc[1]][nc[0]]&&!this.rc.fuel_map[nc[1]][nc[0]]){
@@ -270,6 +270,7 @@ export class Structure extends Unit{
                 }
             }
         }
+        this.log('church loc '+c);
         return c;
     }
 

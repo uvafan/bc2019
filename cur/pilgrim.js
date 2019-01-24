@@ -20,16 +20,10 @@ export class Pilgrim extends Robot{
                 if(this.rc.karbonite>=SPECS.UNITS[SPECS['CHURCH']].CONSTRUCTION_KARBONITE&&this.rc.fuel>SPECS.UNITS[SPECS['CHURCH']].CONSTRUCTION_FUEL+1){
                     //this.log('x '+this.me.x+' y '+this.me.y+' t '+this.target);
                     this.buildingChurch=false;
-                    var theirOffset = (this.rc.trun%2==0?this.offset:1-this.offset);
-                    var cast = this.getBroadcastFromLoc(this.target)+theirOffset;
-                    var dx = this.target[0]-this.me.x;
-                    var dy = this.target[1]-this.me.y;
-                    this.rc.signal(cast,dx*dx+dy*dy);
+                    var build = this.buildChurch();
                     var locToMine = this.getFirstMiningLoc();
-                    this.structLoc = this.target;
-                    this.structDists = this.runBFS(this.structLoc,true);
                     this.updateTarget(locToMine);
-                    return this.rc.buildUnit(SPECS['CHURCH'],dx,dy);
+                    return build;
                 }
             }
             else{
@@ -56,6 +50,25 @@ export class Pilgrim extends Robot{
         }
     }
 
+    buildChurch(){
+        var minDist = Number.MAX_SAFE_INTEGER;
+        for(var i=0;i<this.adjDiagMoves.length;i++){
+            var nx=this.me.x+this.adjDiagMoves[i][0]; 
+            var ny=this.me.y+this.adjDiagMoves[i][1]; 
+            if(this.isWalkable(nx,ny)&&this.distBtwnP(nx,ny,this.target[0],this.target[1])<minDist){
+                this.structLoc = [nx,ny];
+                minDist=this.distBtwnP(nx,ny,this.target[0],this.target[1]);
+            }
+        }
+        var theirOffset = (this.rc.turn%2==0?this.offset:1-this.offset);
+        var cast = this.getBroadcastFromLoc(this.structLoc)+theirOffset;
+        var dx = this.structLoc[0]-this.me.x;
+        var dy = this.structLoc[1]-this.me.y;
+        this.rc.signal(cast,dx*dx+dy*dy);
+        this.structDists = this.runBFS(this.structLoc,true);
+        return this.rc.buildUnit(SPECS['CHURCH'],dx,dy);
+    }
+
     getFirstMiningLoc(){
         var dist = [];
         for(var x=0;x<this.mapSize;x++){
@@ -64,7 +77,7 @@ export class Pilgrim extends Robot{
                 dist[x].push(-1);
             }
         }
-        var q = [[this.target[0],this.target[1]]];
+        var q = [[this.structLoc[0],this.structLoc[1]]];
         while(q.length>0){
             var u = q.shift();
             var x = u[0];
