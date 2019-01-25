@@ -1,5 +1,5 @@
 import {Unit} from 'unit.js';
-import {SPECS} from 'battlecode'; 
+import {SPECS} from 'battlecode';
 import * as params from 'params.js';
 import * as objectives from 'objective.js';
 import * as strategies from 'strategy.js';
@@ -29,11 +29,13 @@ export class Structure extends Unit{
         super.turn(rc);
         this.updateObjectives();
     }
-    
+
     buildIfShould(obj){
         var build = null;
-        var priority = obj.getPriority(this.strat,this.rc.karbonite,this.rc.fuel); 
+        var priority = obj.getPriority(this.strat,this.rc.karbonite,this.rc.fuel);
         var info = this.getUnitTargetAndBroadcast(obj);
+        if(!info[1])
+            return null;
         if(this.shouldBuild(priority,info[0])){
             if(obj.typeStr=='BUILD_CHURCH'){
                 this.buildChurchObjStuff(obj);
@@ -100,6 +102,8 @@ export class Structure extends Unit{
         }
         var unit = obj.unitNeeded(this.strat);
         var target = obj.target;
+        if(!target)
+            return [unit,null,null];
         var broadcast = this.getBroadcast(obj);
         return [unit,target,broadcast];
     }
@@ -130,7 +134,7 @@ export class Structure extends Unit{
 
     buildUnit(unit,target,broadcast){
         var ret=null;
-        if (this.rc.karbonite>=SPECS.UNITS[unit].CONSTRUCTION_KARBONITE && 
+        if (this.rc.karbonite>=SPECS.UNITS[unit].CONSTRUCTION_KARBONITE &&
             this.rc.fuel>SPECS.UNITS[unit].CONSTRUCTION_FUEL+1) {
             var th=this;
             var bestScore = Number.MIN_SAFE_INTEGER;
@@ -152,15 +156,15 @@ export class Structure extends Unit{
                 //this.log('signaling '+broadcast);
                 ret = this.rc.buildUnit(unit,bestMove[0],bestMove[1]);
             }
-        } 
-        return ret; 
+        }
+        return ret;
 
     }
 
     getInitialStrategy(){
         this.strat = new strategies.EcoDefense(this);
     }
-    
+
     getHighestPriorityObjective(){
         var ret=null;
         var highestP = Number.MIN_SAFE_INTEGER;

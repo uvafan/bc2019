@@ -1,10 +1,10 @@
-import {SPECS} from 'battlecode'; 
+import {SPECS} from 'battlecode';
 import {Structure} from 'structure.js';
 import * as params from 'params.js';
 
 export class Church extends Structure{
     constructor(rc){
-        super(rc); 
+        super(rc);
         this.trusted=[];
         this.prelimTrusted=[];
     }
@@ -23,8 +23,8 @@ export class Church extends Structure{
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];
             if(r.team==this.me.team&&this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=2&&(r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])){
-                this.offset = r.signal>>14;
-                var locb = r.signal&((1<<14)-1);
+                this.offset = r.signal>>15;
+                var locb = r.signal&((1<<15)-1);
                 this.enemyCastleLocs.push(this.getLocFromBroadcast(locb));
             }
         }
@@ -38,7 +38,7 @@ export class Church extends Structure{
             if(r.unit != null && r.team==this.me.team){
                 ids.push(r.id);
                 if(r.x != null && r.unit != SPECS['CHURCH']){
-                    if(!this.lastIds.includes(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16 && this.lastObjIdx>-1){ 
+                    if(!this.lastIds.includes(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16 && this.lastObjIdx>-1){
                         this.objectives[this.lastObjIdx].assign(r.id,r.unit);
                     }
                 }
@@ -70,7 +70,7 @@ export class Church extends Structure{
                     this.makeStuff=true;
                 }
            }
-        } 
+        }
     }
 
 }

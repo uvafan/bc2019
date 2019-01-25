@@ -46,7 +46,7 @@ export class Unit{
                 }
             }
         }
-        ret.sort(function(a,b){return a[0]+a[1] - b[0] - b[1]});
+        ret.sort(function(a,b){return Math.abs(a[0])+Math.abs(a[1]) - Math.abs(b[0]) - Math.abs(b[1])});
         return ret;
     }
 
@@ -77,7 +77,7 @@ export class Unit{
         }
         if(this.castleDead&&!this.everDefended){
             msg+=(1<<6);
-            this.castleDead=false; 
+            this.castleDead=false;
         }
         this.rc.castleTalk(msg);
     }

@@ -131,6 +131,7 @@ export class defendCastle extends Objective {
         this.defenseLoc = this.target;
         this.manDistFromEnemy = dfe;
         this.typeStr = 'DEFEND_CASTLE';
+        this.outOfSpots=false;
         this.type=4;
         this.initializeDefenseSpots();
         this.assigneeToIdx={};
@@ -138,6 +139,8 @@ export class defendCastle extends Objective {
     }
 
     getPriorityStratAgnostic(karb,fuel){
+        if(this.outOfSpots)
+            return 0;
         //return Math.max(230-this.distFromEnemy-numDefenders*15,1);
         var numDefenders = this.assignees.length;
         var enemiesInSight = this.th.getEnemiesInSight();
@@ -147,7 +150,7 @@ export class defendCastle extends Objective {
             return Math.max(dangerScore,10-numDefenders);
         }
         else{
-            return Math.max(40-this.manDistFromEnemy/5-numDefenders*2,Math.max(dangerScore,(this.isCastle?4:1)));
+            return Math.max(40-numDefenders*2,Math.max(dangerScore,(this.isCastle?4:1)));
         }
     }
 
@@ -222,7 +225,7 @@ export class defendCastle extends Objective {
                 }
             }
         }
-        this.targetIdx = 20;
+        this.targetIdx = -1;
         var dte = this.th.distBtwnP(enemyLoc[0],enemyLoc[1],this.defenseLoc[0],this.defenseLoc[1]);
         for(var i=0;i<this.spotTaken.length;i++){
             if(this.spotTaken[i])
@@ -244,7 +247,10 @@ export class defendCastle extends Objective {
             if(candidates==params.LATTICE_CANDIDATES)
                 break;
         }
-        this.target = this.defenseSpots[this.targetIdx];
+        if(this.targetIdx==-1)
+            this.target=null;
+        else
+            this.target = this.defenseSpots[this.targetIdx];
     }
 
     assign(id,unit){
