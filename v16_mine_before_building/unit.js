@@ -43,7 +43,6 @@ export class Unit{
                 }
             }
         }
-        ret.sort(function(a,b){return Math.abs(a[0])+Math.abs(a[1]) - Math.abs(b[0]) - Math.abs(b[1])});
         return ret;
     }
     getDxDyOddWithin(min,max){
