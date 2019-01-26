@@ -249,7 +249,7 @@ export class defendCastle extends Objective {
             candidates++;
             var differential = dte-d;
             var dfm = this.th.distBtwnP(this.defenseLoc[0],this.defenseLoc[1],loc[0],loc[1]);
-            var score = differential-dfm;
+            var score = differential/10-dfm;
             //this.log('loc '+loc+' score '+score);
             if(score>bestScore){
                 bestScore=score;

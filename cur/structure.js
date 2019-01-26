@@ -159,7 +159,7 @@ export class Structure extends Unit{
                 var ny = th.me.y+move[1];
                 if(th.isWalkable(nx,ny)){
                     var d = th.distBtwnP(nx,ny,target[0],target[1]);
-                    var score = -d-(move[0]*move[0]+move[1]*move[1])*3;
+                    var score = -d-(move[0]*move[0]+move[1]*move[1])*0.1;
                     if(score>bestScore){
                         bestScore=score;
                         bestMove=move;

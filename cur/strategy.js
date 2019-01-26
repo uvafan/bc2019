@@ -177,6 +177,9 @@ export class EcoDefense extends Strategy {
                 if(minDist<26||(minDist<50&&(enemyUnit==SPECS['PREACHER']||enemyUnit==SPECS['CRUSADER']))){
                     return SPECS['PREACHER'];
                 }
+                if((enemyUnit==SPECS['PREACHER']||enemyUnit==SPECS['CRUSADER'])&&obj.unitCounts[SPECS['PREACHER']]==0){
+                    return SPECS['PREACHER'];
+                }
             } 
             return SPECS['PROPHET'];
         }
