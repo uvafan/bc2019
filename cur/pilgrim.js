@@ -115,7 +115,7 @@ export class Pilgrim extends Robot{
                 this.structLoc = [r.x,r.y];
                 this.eloc = this.reflect(r.x,r.y);
                 this.updateTarget(this.getLocFromBroadcast(locb));                
-                if(this.distBtwnP(this.structLoc[0],this.structLoc[1],this.target[0],this.target[1])>params.MINING_DISTANCE){
+                if(!this.rc.karbonite_map[this.target[1]][this.target[0]]&&!this.rc.fuel_map[this.target[1]][this.target[0]]/*this.distBtwnP(this.structLoc[0],this.structLoc[1],this.target[0],this.target[1])>params.MINING_DISTANCE*/){
                     this.buildingChurch=true;
                 }
             }
