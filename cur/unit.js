@@ -215,6 +215,17 @@ export class Unit{
         return ret;
     }
 
+    getAttackersInSight(){
+        var visRobots = this.rc.getVisibleRobots();
+        var ret= [];
+        for(var i=0;i<visRobots.length;i++){
+            var r = visRobots[i];
+            if(r.x!=null && r.unit != null && r.team!=this.me.team&&r.unit!=SPECS['PILGRIM']){
+                ret.push(r);
+            }
+        }
+        return ret;
+    }
 
     centroid(locs){
         var xSum=0;

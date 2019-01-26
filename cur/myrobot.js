@@ -172,15 +172,15 @@ export class Robot extends Unit{
                 var move = this.adjDiagMoves[i];
                 var nx = x+move[0];
                 var ny = y+move[1];
+                if(nx==x1&&ny==y1)
+                    return true;
                 if(!this.isPassable(nx,ny)||dist[nx][ny]<=dist[x][y]+1)
                     continue;
                 if(this.visRobotMap[ny][nx]<1)
                     continue;
                 var r = this.rc.getRobot(this.visRobotMap[ny][nx]);
-                if(r.team!=this.me.team||r.unit==SPECS['PILGRIM'])
+                if(r.team!=this.me.team||r.unit==SPECS['PILGRIM']||((nx+ny)%1==0))
                     continue;
-                if(nx==x1&&ny==y1)
-                    return true;
                 dist[nx][ny]=dist[x][y]+1;
                 q.push([nx,ny]);
             }

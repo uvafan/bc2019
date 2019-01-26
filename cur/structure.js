@@ -84,13 +84,13 @@ export class Structure extends Unit{
         //this.log('myTurn = '+myTurn);
         var maxFuelSave = params.MIN_FUEL_SAVE+myTurn*params.FUEL_SAVE_ROUND_MULTIPLIER;
         var maxKarbSave = params.MIN_KARB_SAVE+myTurn*params.KARB_SAVE_ROUND_MULTIPLIER;
-        var fuelSave = maxFuelSave*(101-priority)/100;
+        var fuelSave = Math.max(maxFuelSave*(101-priority)/100,2);
         var karbSave = maxKarbSave*(101-priority)/100;
         if(this.makeStuff){
             fuelSave=params.MIN_FUEL_SAVE;
             karbSave=0;
         }
-        return fuelSave<fuelLeft && (karbSave<karbLeft||this.outOfKarb);
+        return fuelSave<=fuelLeft && (karbSave<=karbLeft||this.outOfKarb);
     }
 
     hasChurchRights(x,y){

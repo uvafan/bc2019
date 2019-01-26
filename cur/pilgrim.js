@@ -68,7 +68,16 @@ export class Pilgrim extends Robot{
     }
 
     shouldBuildChurch(){
-        return this.rc.karbonite>=SPECS.UNITS[SPECS['CHURCH']].CONSTRUCTION_KARBONITE&&this.rc.fuel>SPECS.UNITS[SPECS['CHURCH']].CONSTRUCTION_FUEL+1;
+        var karbSave = params.MIN_KARB_SAVE;
+        var fuelSave = params.MIN_FUEL_SAVE;
+        var karbLeft = this.rc.karbonite-SPECS.UNITS[SPECS['CHURCH']].CONSTRUCTION_KARBONITE;
+        var fuelLeft = this.rc.fuel-SPECS.UNITS[SPECS['CHURCH']].CONSTRUCTION_FUEL;
+        var enemiesInSight = this.getEnemiesInSight();
+        if(enemiesInSight.length>0){
+            karbSave=0;
+            fuelSave=2;
+        }
+        return karbLeft>=karbSave && fuelLeft >= fuelSave;
     }
 
     buildChurch(){

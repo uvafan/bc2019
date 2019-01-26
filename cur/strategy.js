@@ -172,11 +172,13 @@ export class EcoDefense extends Strategy {
                         minDist=d;
                     }
                 }
+                //if(minDist<26&&this.th.rc.karbonite<30)
+                    //return SPECS['CRUSADER'];
+                if(minDist<26||(minDist<50&&(enemyUnit==SPECS['PREACHER']||enemyUnit==SPECS['CRUSADER']))){
+                    return SPECS['PREACHER'];
+                }
             } 
-            if(minDist<26||(minDist<50&&enemyUnit==SPECS['PREACHER'])){
-                return SPECS['PREACHER'];
-            }
-            return (enemyUnit==SPECS['CRUSADER']?SPECS['PREACHER']:SPECS['PROPHET']);
+            return SPECS['PROPHET'];
         }
     }
 }

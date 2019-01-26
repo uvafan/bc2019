@@ -13,8 +13,7 @@ export class Preacher extends CombatUnit{
         if(attack)
             return attack;
         return null;
-    }
-
+    } 
     attackEnemy(){
         if(this.rc.fuel < this.attackCost)
             return null;
@@ -65,8 +64,8 @@ export class Preacher extends CombatUnit{
             }
         }
         //this.log('eh '+enemiesHit+' fh '+friendliesHit);
-        if(enemiesHit<=friendliesHit)
-            return 0;
+        //if(enemiesHit<=friendliesHit)
+        //    return 0;
         return enemiesHit*100-friendliesHit*100+dist;
     }
 

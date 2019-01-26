@@ -157,11 +157,10 @@ export class defendCastle extends Objective {
     getPriorityStratAgnostic(karb,fuel){
         if(this.outOfSpots)
             return 0;
-        //return Math.max(230-this.distFromEnemy-numDefenders*15,1);
         var numDefenders = this.assignees.length;
         var enemiesInSight = this.th.getEnemiesInSight();
-        //this.log('eis '+enemiesInSight.length);
-        var dangerScore = (enemiesInSight.length-numDefenders)*100;
+        var attackersInSight = this.th.getAttackersInSight();
+        var dangerScore = Math.max((attackersInSight.length*2-numDefenders)*100,((enemiesInSight.length&&numDefenders==0)?100:0));
         return Math.max(10-numDefenders/4-this.manDistFromEnemy/8,Math.max(dangerScore,(this.isCastle?5:1)));
     }
 
