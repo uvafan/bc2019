@@ -150,6 +150,7 @@ export class Castle extends Structure{
                 this.unitCounts[this.idToUnit[r.id]]++;
                 if(r.unit != null && r.unit != SPECS['CASTLE']){
                     if(!this.lastIds.includes(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16){ 
+                        //this.log('hi '+r.id);
                         this.objectives[this.lastObjIdx].assign(r.id,r.unit);
                     }
                 }

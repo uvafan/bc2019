@@ -131,7 +131,7 @@ export class Robot extends Unit{
             var r=visRobots[i];
             if(r.team==this.me.team&&r.x&&r.unit!=SPECS['PILGRIM']){
                 var d = this.distBtwnP(r.x,r.y,this.me.x,this.me.y);
-                if(d<=2){
+                if(d<=2&&(this.me.unit!=SPECS['PILGRIM']||this.hasChain(r.x,r.y,toward[0],toward[1]))){
                     var d2 = this.distBtwnP(toward[0],toward[1],r.x,r.y);
                     if(d2<minDist){
                         minDist=d2;
@@ -144,6 +144,48 @@ export class Robot extends Unit{
         if(dy||dx)
             return this.rc.give(dx,dy,this.me.karbonite,this.me.fuel);
         return null;
+    }
+
+    hasChain(x0,y0,x1,y1){
+        var dist = [];
+        for(var x=0;x<this.mapSize;x++){
+            dist.push([]);
+            for(var y=0;y<this.mapSize;y++){
+                dist[x].push(Number.MAX_SAFE_INTEGER);
+            }
+        }
+        var q = [];
+        q.push([x0,y0]);
+        for(var i=0;i<q.length;i++){
+            dist[q[i][0]][q[i][1]]=0;
+        }
+        var count=0;
+        while(q.length>0){
+            /*count++;
+            if(count==1000)
+                break;*/
+            var u = q.shift();
+            var x = u[0];
+            var y = u[1];
+            //this.log('x '+x+' y '+y + ' d0 ' + dist[x][y]);
+            for(var i=0;i<this.adjDiagMoves.length;i++){
+                var move = this.adjDiagMoves[i];
+                var nx = x+move[0];
+                var ny = y+move[1];
+                if(!this.isPassable(nx,ny)||dist[nx][ny]<=dist[x][y]+1)
+                    continue;
+                if(this.visRobotMap[ny][nx]<1)
+                    continue;
+                var r = this.rc.getRobot(this.visRobotMap[ny][nx]);
+                if(r.team!=this.me.team||r.unit==SPECS['PILGRIM'])
+                    continue;
+                if(nx==x1&&ny==y1)
+                    return true;
+                dist[nx][ny]=dist[x][y]+1;
+                q.push([nx,ny]);
+            }
+        }
+        return false;
     }
 
 }

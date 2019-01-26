@@ -23,8 +23,8 @@ export class Church extends Structure{
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];
             if(r.team==this.me.team&&this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=2&&(r.unit==SPECS['PILGRIM'])){
-                this.log('hi');
-                this.offset = r.signal>>15;
+                //this.log('hi');
+                this.karbFirst = r.signal>>15;
                 var now = (r.signal&((1<<15)-1));
                 var turnDial = now>>12;
                 this.createdTurn = params.PILGRIM_TURN_ARRAY[turnDial];

@@ -52,6 +52,7 @@ export class Objective {
     }
 
     assign(id,unit){
+        //this.log('assigned '+id);
         this.assignees.push(id);
         this.assigneesToTarg[id]=this.targNum;
         this.assigneesToUnit[id]=unit;
@@ -75,7 +76,7 @@ export class gatherKarb extends Objective {
     getPriorityStratAgnostic(karb,fuel){
         if(this.assignees.length)
             return 0;
-        var karbNeeded = (karb*10>fuel?0:1);
+        var karbNeeded = (karb*params.FUEL_KARB_RATIO>fuel?0:1);
         var distScore = Math.max(50-this.distFromMe,.5);
         return distScore/(karbNeeded?1:2);
     }
@@ -92,7 +93,7 @@ export class gatherFuel extends Objective {
     getPriorityStratAgnostic(karb,fuel){
         if(this.assignees.length)
             return 0;
-        var karbNeeded = (karb*10>fuel?0:1);
+        var karbNeeded = (karb*params.FUEL_KARB_RATIO>fuel?0:1);
         var distScore = Math.max(50-this.distFromMe,.5);
         return distScore/(karbNeeded?2:1);
     }

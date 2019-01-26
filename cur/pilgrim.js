@@ -8,17 +8,18 @@ export class Pilgrim extends Robot{
         this.buildingChurch=false;
         this.getFirstTarget();
         this.structDists = this.runBFS(this.structLoc,true);
+        this.locToMine = null;
     }
 
     turn(rc){
         super.turn(rc);
+        this.karbNeeded = (this.rc.karbonite*params.FUEL_KARB_RATIO<this.rc.fuel?1:0); 
         if(this.me.turn%10==0)
             this.structDists = this.runBFS(this.structLoc,true);
         if(this.buildingChurch){
-            //this.log('trying to bc at '+this.target[0]+' '+this.target[1]);
-            if(this.distBtwnP(this.target[0],this.target[1],this.me.x,this.me.y)<=2){
-                if(this.rc.karbonite>=SPECS.UNITS[SPECS['CHURCH']].CONSTRUCTION_KARBONITE&&this.rc.fuel>SPECS.UNITS[SPECS['CHURCH']].CONSTRUCTION_FUEL+1){
-                    //this.log('x '+this.me.x+' y '+this.me.y+' t '+this.target);
+            var distToT = this.distBtwnP(this.target[0],this.target[1],this.me.x,this.me.y);
+            if(distToT<=2){
+                if(this.shouldBuildChurch()){
                     this.buildingChurch=false;
                     var build = this.buildChurch();
                     var locToMine = this.getFirstMiningLoc();
@@ -26,6 +27,19 @@ export class Pilgrim extends Robot{
                     if(build)
                         this.churchBuilt=true;
                     return build;
+                }
+                else{
+                    if(!this.locToMine||this.isPartiallyFull()){
+                        this.locToMine = this.getWaitingMiningLoc(); 
+                        if(this.locToMine)
+                            this.mineDists = this.runBFS(this.locToMine,false);
+                    }
+                    if(this.locToMine&&this.rc.fuel>0&&this.locsEqual(this.locToMine,[this.me.x,this.me.y])&&!this.isFullyFull()){
+                        return this.rc.mine();
+                    }
+                    else if(this.locToMine){
+                        return this.navTo(this.mineDists,this.locToMine,params.PILGRIM_NAV_WEIGHTS,true,true);
+                    }
                 }
             }
             else{
@@ -50,13 +64,18 @@ export class Pilgrim extends Robot{
         else{
             return this.navTo(this.targetDists,this.target,params.PILGRIM_NAV_WEIGHTS,true,true);
         }
+        return null;
+    }
+
+    shouldBuildChurch(){
+        return this.rc.karbonite>=SPECS.UNITS[SPECS['CHURCH']].CONSTRUCTION_KARBONITE&&this.rc.fuel>SPECS.UNITS[SPECS['CHURCH']].CONSTRUCTION_FUEL+1;
     }
 
     buildChurch(){
         var minDist = Number.MAX_SAFE_INTEGER;
         var theirOffset = (this.me.turn%2==0?1-this.offset:this.offset);
         var dial = this.getClosestDial(this.me.turn+this.createdTurn);
-        var cast = this.getBroadcastFromLoc(this.structLoc)+(theirOffset<<15)+(dial<<12);
+        var cast = this.getBroadcastFromLoc(this.structLoc)+(this.karbNeeded<<15)+(dial<<12);
         for(var i=0;i<this.adjDiagMoves.length;i++){
             var nx=this.me.x+this.adjDiagMoves[i][0]; 
             var ny=this.me.y+this.adjDiagMoves[i][1]; 
@@ -91,14 +110,43 @@ export class Pilgrim extends Robot{
                 var ny=y+move[1];
                 if(!this.isPassable(nx,ny)||dist[nx][ny]>-1)
                     continue;
-                if(this.rc.karbonite_map[ny][nx]||this.rc.fuel_map[ny][nx]){
-                    //this.log(nx+' '+ny);
+                if(this.karbNeeded?this.rc.karbonite_map[ny][nx]:this.rc.fuel_map[ny][nx]){
                     return [nx,ny];
                 }
                 dist[nx][ny]=dist[x][y]+1;
                 q.push([nx,ny]);
             }
         }
+    }
+
+    getWaitingMiningLoc(){
+        var karbPreferred = this.karbNeeded;
+        var karbFull = this.isKarbFull();
+        var fuelFull = this.isFuelFull();
+        var ret = null;
+        var bestScore = Number.MIN_SAFE_INTEGER;
+        for(var i=0;i<8;i++){
+            var offset = this.adjDiagMoves[i];
+            var loc = [this.target[0]+offset[0],this.target[1]+offset[1]];
+            if(this.isPassable(loc[0],loc[1])){
+                var score = Number.MIN_SAFE_INTEGER;
+                if(this.rc.karbonite_map[loc[1]][loc[0]]){
+                    if(!karbFull){
+                        score = (karbPreferred?100:0)-this.distBtwnP(this.me.x,this.me.y,loc[0],loc[1]);
+                    }
+                }
+                else if(this.rc.fuel_map[loc[1]][loc[0]]){
+                    if(!fuelFull){
+                        score = (karbPreferred?0:100)-this.distBtwnP(this.me.x,this.me.y,loc[0],loc[1]);
+                    }
+                }
+                if(score>bestScore){
+                    bestScore=score;
+                    ret=loc;
+                }
+            }
+        }
+        return ret;
     }
 
     getFirstTarget(){
@@ -126,6 +174,27 @@ export class Pilgrim extends Robot{
 
     isFull(){
         return this.me.fuel==SPECS.UNITS[this.me.unit]['FUEL_CAPACITY'] ||
+               this.me.karbonite==SPECS.UNITS[this.me.unit]['KARBONITE_CAPACITY'];
+    }
+
+    isPartiallyFull(){
+        return this.me.fuel==SPECS.UNITS[this.me.unit]['FUEL_CAPACITY'] &&
+               this.me.karbonite<SPECS.UNITS[this.me.unit]['KARBONITE_CAPACITY'] ||
+               this.me.fuel<SPECS.UNITS[this.me.unit]['FUEL_CAPACITY'] &&
+               this.me.karbonite==SPECS.UNITS[this.me.unit]['KARBONITE_CAPACITY'];
+
+    }
+
+    isKarbFull(){
+        return this.me.karbonite==SPECS.UNITS[this.me.unit]['KARBONITE_CAPACITY'];
+    }
+
+    isFuelFull(){
+        return this.me.fuel==SPECS.UNITS[this.me.unit]['FUEL_CAPACITY'];
+    }
+
+    isFullyFull(){
+        return this.me.fuel==SPECS.UNITS[this.me.unit]['FUEL_CAPACITY'] &&
                this.me.karbonite==SPECS.UNITS[this.me.unit]['KARBONITE_CAPACITY'];
     }
 

@@ -226,7 +226,8 @@ export class Structure extends Unit{
                     continue;
                 //this.log(nx+' '+ny);
                 if(this.rc.karbonite_map[ny][nx]||this.rc.fuel_map[ny][nx]){
-                    if(firstLoc&&this.me.unit==SPECS['CHURCH']){
+                    if(firstLoc&&this.me.unit==SPECS['CHURCH']&&
+                        (this.karbFirst?this.rc.karbonite_map[ny][nx]:this.rc.fuel_map[ny][nx])){
                         //this.log('c '+nx+' '+ny);
                         var myDist = this.distBtwnP(nx,ny,this.me.x,this.me.y);
                         firstLoc=false;
