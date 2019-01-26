@@ -130,11 +130,13 @@ export class CombatUnit extends Robot{
 		//return null;
 	}
 	pickBetterTarget(){
-		var dist = this.getDxDyOddWithin(0,SPECS.UNITS[this.me.unit]['VISION_RADIUS'])
+		var dist = this.getDxDyWithin(0,SPECS.UNITS[this.me.unit]['VISION_RADIUS'])
+        var moves = [[1,1],[1,-1],[-1,1],[-1,-1]];
 		for(var i = 0; i < dist.length; i++){
 			var nx = this.target[0]+dist[i][0];
 			var ny = this.target[1]+dist[i][1];
 			if(!this.offMap(nx,ny) && !this.rc.karbonite_map[ny][nx] && !this.rc.fuel_map[ny][nx] && this.isWalkable(nx,ny)){
+                if((dx+dy)%2 == 0){
 				var newTarget = [nx,ny];
 				this.log("Switching from old target:")
 				this.log(this.target);
@@ -142,6 +144,28 @@ export class CombatUnit extends Robot{
 				this.log(newTarget);
 				this.updateTarget(newTarget);
 				return;
+                }
+                if(nx%2 == 0 && ny %2 == 0){
+                    var score = 0;
+                    for(var j = 0; j < moves.length; j++){
+                        var nnx = nx + moves[j][0];
+                        var nny = ny + moves[j][1];
+                        if(this.th.rc.karbonite_Map[nny][nnx] || this.th.rc.fuel_map[nny][nnx] || !this.th.isPassable(nnx,nny))
+                            score++;
+
+                    }
+                    if(score <= 1){
+				var newTarget = [nx,ny];
+				this.log("Switching from old target:")
+				this.log(this.target);
+				this.log("to new SCARY target");
+				this.log(newTarget);
+				this.updateTarget(newTarget);
+				return;
+
+                    }
+                }
+
 			}
 		}
 		if(this.exploreDir == -1){

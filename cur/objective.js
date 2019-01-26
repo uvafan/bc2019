@@ -215,6 +215,26 @@ export class defendCastle extends Objective {
                 }
                 q.push([nx,ny]);
             }
+            for(var i = 0; i < evenMoves.length;i++){
+                var nx = x+evenMoves[i][0];
+                var ny = y+evenMoves[i][1];
+                if(this.th.offMap(nx,ny)||dis[nx][ny]>-1||(!this.isCastle&&this.th.distBtwn(this.defenseLoc[0],this.defenseLoc[1],nx,ny)>100) || (nx % 2 == 1 || ny %2 == 1))
+                    continue;
+                dist[nx][ny] = dist[x][y]+1;
+                if(!this.th.rc.karbonite_map[ny][nx] && ! this.th.rc.fuel_map[ny][nx] && this.th.isPassable(nx,ny)){
+                    var score = 0;
+                    for(var j = 0; j < moves.length; j++){
+                        var nnx = nx + moves[j][0];
+                        var nny = ny + moves[j][1];
+                        if(this.th.rc.karbonite_map[nny][nnx] || this.th.rc.fuel_map[nny][nnx] || !this.th.isPassable(nnx,nny))
+                            score++;
+                    }
+                    if(score <= 1){
+                        this.defenseSpots.push([nx,ny])
+                        this.spotTaken.push(false);
+                    }
+                }
+            }
 
         }
 
@@ -233,7 +253,8 @@ export class defendCastle extends Objective {
                     enemyLoc = [enemiesInSight[i].x,enemiesInSight[i].y];
                     minDist=d;
                 }
-            }
+                this.defenseSpots.push([nx,ny]);
+                this.spotTaken.push(false);            }
         }
         this.targetIdx = -1;
         var dte = this.th.distBtwnP(enemyLoc[0],enemyLoc[1],this.defenseLoc[0],this.defenseLoc[1]);
