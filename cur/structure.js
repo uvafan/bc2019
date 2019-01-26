@@ -8,6 +8,7 @@ export class Structure extends Unit{
 
     constructor(rc){
         super(rc);
+        this.startingHealth = SPECS.UNITS[this.me.unit].STARTING_HP;
         this.makeStuff=false;
         this.createdTurn=0;
         this.lastObjIdx = -1;
