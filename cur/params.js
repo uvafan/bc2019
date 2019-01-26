@@ -39,3 +39,6 @@ export var MAKE_STUFF_SIGNAL=35782;
 
 //turn precision
 export var PILGRIM_TURN_ARRAY = [0,25,50,80,150,250,400,700];
+
+//attacking priorities: [CASTLE,CHURCH,PILGRIM,CRUSADER,PROPHET,PREACHER]
+export var ATTACK_PRIORITIES = [1,1,1.5,3,3,5];

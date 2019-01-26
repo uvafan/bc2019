@@ -179,7 +179,7 @@ export class Robot extends Unit{
                 if(this.visRobotMap[ny][nx]<1)
                     continue;
                 var r = this.rc.getRobot(this.visRobotMap[ny][nx]);
-                if(r.team!=this.me.team||r.unit==SPECS['PILGRIM']||((nx+ny)%1==0))
+                if(r.team!=this.me.team||r.unit==SPECS['PILGRIM'])
                     continue;
                 dist[nx][ny]=dist[x][y]+1;
                 q.push([nx,ny]);

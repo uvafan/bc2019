@@ -43,8 +43,7 @@ export class Preacher extends CombatUnit{
         }
         //this.log(tile);
         var dist = off[0]*off[0]+off[1]*off[1];
-        var enemiesHit=0;
-        var friendliesHit=0;
+        var hitScore=0;
         for(var i=0;i<this.splash.length;i++){
             var off = this.splash[i];
             var splashTile = [tile[0]+off[0],tile[1]+off[1]];
@@ -56,17 +55,17 @@ export class Preacher extends CombatUnit{
             if(rid>0){
                 var r = this.rc.getRobot(rid);
                 if(r.team!=this.me.team){
-                    enemiesHit++;
+                    hitScore+=params.ATTACK_PRIORITIES[r.unit];
                 }
                 else{
-                    friendliesHit++;
+                    hitScore-=params.ATTACK_PRIORITIES[r.unit];
                 }
             }
         }
         //this.log('eh '+enemiesHit+' fh '+friendliesHit);
         //if(enemiesHit<=friendliesHit)
         //    return 0;
-        return enemiesHit*100-friendliesHit*100+dist;
+        return hitScore*100+dist;
     }
 
 }

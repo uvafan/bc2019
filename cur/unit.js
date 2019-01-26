@@ -194,7 +194,7 @@ export class Unit{
             var distToR = th.distBtwn(th.me,r);
             if(th.attackRadius[0]>distToR||th.attackRadius[1]<distToR)
                 return;
-            var score = r.unit*100-distToR;
+            var score = params.ATTACK_PRIORITIES[r.unit]*100-distToR;
             if(score>bestScore){
                 bestScore = score;
                 ret = th.rc.attack(r.x-th.me.x,r.y-th.me.y);
