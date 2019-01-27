@@ -30,8 +30,8 @@ export var FUEL_KARB_RATIO=7;
 
 //new defense stuff
 export var LATTICE_CANDIDATES=20;
-export var ATTACK_NOW=700;
-export var MAKE_STUFF=950;
+export var ATTACK_NOW=800;
+export var MAKE_STUFF=930;
 export var USE_LATTICE=1;
 
 //signaling stuff

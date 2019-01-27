@@ -291,7 +291,8 @@ export class defendCastle extends Objective {
             candidates++;
             var differential = dte-d;
             var dfm = this.th.distBtwnP(this.defenseLoc[0],this.defenseLoc[1],loc[0],loc[1]);
-            var score = (differential>=0?1000:0)-dfm;
+            var score = ((this.unitNeeded(this.th.strat) == SPECS['CRUSADER'] ? -differential : differential)>=0?1000:0)-dfm;
+
             //this.log('loc '+loc+' score '+score);
             if(score>bestScore){
                 bestScore=score;

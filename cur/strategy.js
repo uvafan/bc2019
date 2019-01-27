@@ -1,4 +1,4 @@
-import {SPECS} from 'battlecode'; 
+import {SPECS} from 'battlecode';
 import * as params from 'params.js';
 
 
@@ -180,7 +180,10 @@ export class EcoDefense extends Strategy {
                 if((enemyUnit==SPECS['PREACHER']||enemyUnit==SPECS['CRUSADER'])&&obj.unitCounts[SPECS['PREACHER']]==0){
                     return SPECS['PREACHER'];
                 }
-            } 
+            }
+            if(this.th.makeStuff){
+                return SPECS['CRUSADER'];
+            }
             return SPECS['PROPHET'];
         }
     }
