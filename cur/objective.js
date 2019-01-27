@@ -181,12 +181,19 @@ export class defendCastle extends Objective {
         var evenMoves = [[0,1],[0,-1],[1,0],[-1,0]];
         var firstTurn = 1;
         var badSpots = [];
-         var visRobots = this.th.rc.getVisibleRobots();
+        var visRobots = this.th.rc.getVisibleRobots();
 
         for(var i=0;i<visRobots.length;i++){
             var r=visRobots[i];
-            if((r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])&&this.th.distBtwnP(r.x,r.y,this.th.me.x,this.th.me.y)<=2){
-                badSpots.push(r);
+            if((r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])){
+
+
+                var bad = this.th.getDxDyWithin(0,2);
+                for(var j = 0; j < bad.length; j++){
+                    var target = [r.x+bad[0],r.y+bad[1]];
+                    badSpots.push(target);
+                }
+
             }
         }
 

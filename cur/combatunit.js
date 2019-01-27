@@ -137,8 +137,13 @@ export class CombatUnit extends Robot{
         var badSpots = [];
         for(var i=0;i<visRobots.length;i++){
             var r=visRobots[i];
-            if((r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])&&this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=2){
-                badSpots.push(r);
+            if(r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH']){
+                var bad = this.getDxDyWithin(0,2);
+                for(var j = 0; j < bad.length; j++){
+                    var mytarget = [r.x+bad[0],r.y+bad[1]];
+
+                badSpots.push(mytarget);
+                }
             }
         }
         for(var i = 0; i < dist.length; i++){
