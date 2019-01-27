@@ -219,15 +219,22 @@ export class defendCastle extends Objective {
             for(var i = 0; i < evenMoves.length;i++){
                 var nx = x+evenMoves[i][0];
                 var ny = y+evenMoves[i][1];
-                if(this.th.offMap(nx,ny)||dis[nx][ny]>-1||(!this.isCastle&&this.th.distBtwn(this.defenseLoc[0],this.defenseLoc[1],nx,ny)>100) || (nx % 2 == 1 || ny %2 == 1))
+                if(this.th.offMap(nx,ny)||dist[nx][ny]>-1||(!this.isCastle&&this.th.distBtwn(this.defenseLoc[0],this.defenseLoc[1],nx,ny)>100) || (nx % 2 == 1 || ny %2 == 1))
                     continue;
+                if(this.th.distBtwnP(nx,ny,this.defenseLoc[0],this.defenseLoc[1]) <= 2){
+                    //var newLoc = [nx,ny];
+                    //this.log(newLoc);
+                    //this.log(this.defenseLoc);
+                    //this.log("THIS IS A LOCATION TOO CLOSE TO THE CASTLE");
+                    continue;
+                }
                 dist[nx][ny] = dist[x][y]+1;
                 if(!this.th.rc.karbonite_map[ny][nx] && ! this.th.rc.fuel_map[ny][nx] && this.th.isPassable(nx,ny)){
                     var score = 0;
                     for(var j = 0; j < moves.length; j++){
                         var nnx = nx + moves[j][0];
                         var nny = ny + moves[j][1];
-                        if(this.th.rc.karbonite_map[nny][nnx] || this.th.rc.fuel_map[nny][nnx] || !this.th.isPassable(nnx,nny))
+                        if(this.th.offMap(nnx,nny) || this.th.rc.karbonite_map[nny][nnx] || this.th.rc.fuel_map[nny][nnx] || !this.th.isPassable(nnx,nny))
                             score++;
                     }
                     if(score <= 1){
@@ -254,8 +261,7 @@ export class defendCastle extends Objective {
                     enemyLoc = [enemiesInSight[i].x,enemiesInSight[i].y];
                     minDist=d;
                 }
-                this.defenseSpots.push([nx,ny]);
-                this.spotTaken.push(false);            }
+            }
         }
         this.targetIdx = -1;
         var dte = this.th.distBtwnP(enemyLoc[0],enemyLoc[1],this.defenseLoc[0],this.defenseLoc[1]);
@@ -288,6 +294,7 @@ export class defendCastle extends Objective {
 
     assign(id,unit){
         super.assign(id,unit);
+        //this.log(this.targetIdx);
         this.assigneeToIdx[id] = this.targetIdx;
         this.spotTaken[this.targetIdx]=true;
     }
@@ -305,6 +312,8 @@ export class defendCastle extends Objective {
         }
         for(var i=0;i<this.assignees.length;i++){
             this.spotTaken[this.assigneeToIdx[this.assignees[i]]]=true;
+            //this.log('id '+this.assignees[i]);
+            //this.log('spot '+this.assigneeToIdx[this.assignees[i]]);
         }
     }
 

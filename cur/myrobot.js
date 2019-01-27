@@ -1,5 +1,5 @@
 import {Unit} from 'unit.js';
-import {SPECS} from 'battlecode'; 
+import {SPECS} from 'battlecode';
 import * as params from 'params.js';
 export class Robot extends Unit{
 
@@ -55,6 +55,8 @@ export class Robot extends Unit{
             var u = q.shift();
             var x = u[0];
             var y = u[1];
+            if(x==this.me.x&&y==this.me.y)
+                break;
             //this.log('x '+x+' y '+y + ' d0 ' + dist[x][y]);
             for(var i=0;i<this.possibleMoves.length;i++){
                 var move = this.possibleMoves[i];
@@ -87,7 +89,7 @@ export class Robot extends Unit{
             if(distRem==0&&!standOn)
                 continue;
             var movementScore = turnsSaved*10-distRem;
-            var splashBadness = this.getSplashBadness(nx,ny); 
+            var splashBadness = this.getSplashBadness(nx,ny);
             var score = movementScore*weights[0]-fuelUsed*weights[1]-splashBadness*weights[2];
             if(move[0]==0&&move[1]==0)
                 score-=params.STOP_PENALTY;
