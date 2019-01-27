@@ -7,14 +7,14 @@ export class Pilgrim extends Robot{
         super(rc);
         this.buildingChurch=false;
         this.getFirstTarget();
-        this.structDists = this.runBFS(this.structLoc,true);
+        //this.structDists = this.runBFS(this.structLoc,true);
         this.locToMine = null;
     }
 
     turn(rc){
         super.turn(rc);
         this.karbNeeded = (this.rc.karbonite*params.FUEL_KARB_RATIO<this.rc.fuel?1:0); 
-        if(this.me.turn%10==0)
+        if(this.me.turn%10==5)
             this.structDists = this.runBFS(this.structLoc,true);
         if(this.buildingChurch){
             //this.log('trying to bc at '+this.target);
@@ -25,6 +25,7 @@ export class Pilgrim extends Robot{
                     var locToMine = this.getFirstMiningLoc();
                     this.updateTarget(locToMine);
                     if(build){
+                        //this.log('hi');
                         this.churchBuilt=true;
                         this.buildingChurch=false;
                     }
@@ -49,16 +50,10 @@ export class Pilgrim extends Robot{
             }
         }
         else if(this.isFull()){
-            if(this.distBtwnP(this.structLoc[0],this.structLoc[1],this.me.x,this.me.y)<=2){
-                //this.log('x '+this.me.x+' y '+this.me.y+' t '+this.target);
-                return this.rc.give(this.structLoc[0]-this.me.x,this.structLoc[1]-this.me.y,this.me.karbonite,this.me.fuel);
-            }
-            else{
-                var giveToDefenseUnit = this.giveBack(this.structLoc);
-                if(giveToDefenseUnit)
-                    return giveToDefenseUnit;
-                return this.navTo(this.structDists,this.structLoc,params.PILGRIM_NAV_WEIGHTS,true,true);
-            }
+            var giveToDefenseUnit = this.giveBack(this.structLoc);
+            if(giveToDefenseUnit)
+                return giveToDefenseUnit;
+            return this.navTo(this.structDists,this.structLoc,params.PILGRIM_NAV_WEIGHTS,true,true);
         }
         else if(this.me.x==this.target[0]&&this.me.y==this.target[1]&&this.rc.fuel>0){
             return this.rc.mine();

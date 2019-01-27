@@ -310,7 +310,7 @@ export class Structure extends Unit{
                     newObjs.push(o);
                     cluster.push([o.target[0],o.target[1]])
                 }
-                else if(d<=params.MINING_DISTANCE*3/4){
+                else if(d<=params.MINING_DISTANCE){
                     cluster.push([o.target[0],o.target[1]]);
                 }
                 else{

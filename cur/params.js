@@ -17,7 +17,7 @@ export var PILGRIM_NAV_WEIGHTS=[10,1,0];
 
 export var STOP_PENALTY=3;
 
-export var MINING_DISTANCE=50;
+export var MINING_DISTANCE=25;
 
 //fuel/karb management
 export var MIN_FUEL_SAVE=200;
