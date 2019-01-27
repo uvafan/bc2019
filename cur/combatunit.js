@@ -140,7 +140,7 @@ export class CombatUnit extends Robot{
             if(r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH']){
                 var bad = this.getDxDyWithin(0,2);
                 for(var j = 0; j < bad.length; j++){
-                    var mytarget = [r.x+bad[0],r.y+bad[1]];
+                    var mytarget = [r.x+bad[j][0],r.y+bad[j][1]];
 
                 badSpots.push(mytarget);
                 }

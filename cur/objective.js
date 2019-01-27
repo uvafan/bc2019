@@ -190,7 +190,7 @@ export class defendCastle extends Objective {
 
                 var bad = this.th.getDxDyWithin(0,2);
                 for(var j = 0; j < bad.length; j++){
-                    var target = [r.x+bad[0],r.y+bad[1]];
+                    var target = [r.x+bad[j][0],r.y+bad[j][1]];
                     badSpots.push(target);
                 }
 
