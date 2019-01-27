@@ -162,7 +162,7 @@ export class defendCastle extends Objective {
         var enemiesInSight = this.th.getEnemiesInSight();
         var attackersInSight = this.th.getAttackersInSight();
         var dangerScore = Math.max((attackersInSight.length*2-numDefenders)*100,((enemiesInSight.length&&numDefenders==0)?100:0));
-        return Math.max(10-numDefenders/4-this.manDistFromEnemy/8,Math.max(dangerScore,(this.isCastle?5:1)))+((damaged&&this.isCastle)&&numDefenders<10?30:0);
+        return Math.max(10-numDefenders/4-this.manDistFromEnemy/8,Math.max(dangerScore,(this.isCastle?5:1)))+((damaged&&this.isCastle&&numDefenders<10)?30:0);
     }
 
     initializeDefenseSpots(){
