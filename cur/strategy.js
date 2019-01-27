@@ -164,8 +164,7 @@ export class EcoDefense extends Strategy {
             var enemiesInSight = this.th.getEnemiesInSight();
             var enemyUnit = -1;
             var minDist = Number.MAX_SAFE_INTEGER;
-            //this.log('uc '+obj.unitCounts);
-            if(enemiesInSight.length>0&&obj.unitCounts[SPECS['PREACHER']]<3){
+            if(enemiesInSight.length>0){
                 for(var i=0;i<enemiesInSight.length;i++){
                     var d = this.th.distBtwnP(enemiesInSight[i].x,enemiesInSight[i].y,this.th.me.x,this.th.me.y);
                     if(d<minDist){
@@ -182,7 +181,7 @@ export class EcoDefense extends Strategy {
                     return SPECS['PREACHER'];
                 }
             }
-            if(this.th.makeStuff&&enemiesInSight.length==0){
+            if(this.th.makeStuff){
                 return SPECS['CRUSADER'];
             }
             return SPECS['PROPHET'];

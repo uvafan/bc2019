@@ -124,7 +124,6 @@ export class Castle extends Structure{
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];
             //this.log('hi1 '+r.id);
-            var churchObjIndex = -1;
             if(r.castle_talk != null && (r.team==null || r.team==this.me.team) && !(r.castle_talk&(1<<7))){
                 //this.log('hi '+r.id);
                 ids.add(r.id);
@@ -137,21 +136,13 @@ export class Castle extends Structure{
                     for(var i=0;i<this.objectives.length;i++){
                         var obj = this.objectives[i];
                         if(obj.typeStr=='BUILD_CHURCH'&&obj.assignees.includes(r.id)){
-                            churchObjIndex = i;
+                            obj.built=true;
                         }
                     }
                 }
                 if(!(r.id in this.idToUnit)){
                     this.idToUnit[r.id]=msg;
                     this.idToLoc[r.id]=[-1,-1];
-                    if(msg==SPECS['CHURCH']&&churchObjIndex>-1)
-                        this.objectives[churchObjIndex].assign(r.id,SPECS['CHURCH']);
-                }
-                else if(this.idToUnit[r.id]==SPECS['CHURCH']){
-                    if(this.idToLoc[r.id][0]==-1)
-                        this.idToLoc[r.id][0]=msg;
-                    else if(this.idToLoc[r.id][1]==-1)
-                        this.idToLoc[r.id][1]=msg;
                 }
                 else if(this.me.turn%2==0){
                     this.idToLoc[r.id][0]=msg;
