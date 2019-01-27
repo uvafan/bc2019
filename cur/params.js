@@ -24,7 +24,7 @@ export var MIN_FUEL_SAVE=200;
 export var MIN_KARB_SAVE=50;
 export var FUEL_SAVE_ROUND_MULTIPLIER=7;
 export var KARB_SAVE_ROUND_MULTIPLIER=0.5;
-export var FUEL_KARB_RATIO=10;
+export var FUEL_KARB_RATIO=7;
 
 //new defense stuff
 export var LATTICE_CANDIDATES=10;
@@ -39,3 +39,6 @@ export var MAKE_STUFF_SIGNAL=35782;
 
 //turn precision
 export var PILGRIM_TURN_ARRAY = [0,25,50,80,150,250,400,700];
+
+//attacking priorities: [CASTLE,CHURCH,PILGRIM,CRUSADER,PROPHET,PREACHER]
+export var ATTACK_PRIORITIES = [1,1,1.5,3,3,5];
