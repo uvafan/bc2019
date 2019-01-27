@@ -33,7 +33,7 @@ export class Objective {
         var noSig=[];
         for(var i=0;i<this.assignees.length;i++){
             var a = this.assignees[i];
-            if(idsAlive.includes(a)){
+            if(idsAlive.has(a)){
                 newAssignees.push(a);
                 this.unitCounts[this.assigneesToUnit[a]]++;
             }
@@ -74,7 +74,7 @@ export class gatherKarb extends Objective {
     }
 
     getPriorityStratAgnostic(karb,fuel){
-        if(this.assignees.length)
+        if(this.assignees.length||this.distFromMe>params.MINING_DISTANCE||!this.th.isSafe(this.target[0],this.target[1]))
             return 0;
         var karbNeeded = (karb*params.FUEL_KARB_RATIO>fuel?0:1);
         var distScore = Math.max(50-this.distFromMe,.5);
@@ -91,7 +91,7 @@ export class gatherFuel extends Objective {
     }
 
     getPriorityStratAgnostic(karb,fuel){
-        if(this.assignees.length)
+        if(this.assignees.length||this.distFromMe>params.MINING_DISTANCE||!this.th.isSafe(this.target[0],this.target[1]))
             return 0;
         var karbNeeded = (karb*params.FUEL_KARB_RATIO>fuel?0:1);
         var distScore = Math.max(50-this.distFromMe,.5);
@@ -162,7 +162,7 @@ export class defendCastle extends Objective {
         var enemiesInSight = this.th.getEnemiesInSight();
         var attackersInSight = this.th.getAttackersInSight();
         var dangerScore = Math.max((attackersInSight.length*2-numDefenders)*100,((enemiesInSight.length&&numDefenders==0)?100:0));
-        return Math.max(10-numDefenders/4-this.manDistFromEnemy/8,Math.max(dangerScore,(this.isCastle?5:1)))+((damaged&&this.isCastle&&numDefenders<10)?30:0);
+        return Math.max(10-numDefenders/4-this.manDistFromEnemy/20,Math.max(dangerScore,(this.isCastle?1:0)))+((damaged&&this.isCastle&&numDefenders<10)?30:0);
     }
 
     initializeDefenseSpots(){
@@ -286,8 +286,10 @@ export class defendCastle extends Objective {
             if(candidates==params.LATTICE_CANDIDATES)
                 break;
         }
-        if(this.targetIdx==-1)
+        if(this.targetIdx==-1){
             this.target=null;
+            this.outOfSpots=true;
+        }
         else
             this.target = this.defenseSpots[this.targetIdx];
     }

@@ -22,9 +22,9 @@ export class Church extends Structure{
         var visRobots = this.rc.getVisibleRobots();
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];
-            if(r.team==this.me.team&&this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=2&&(r.unit==SPECS['PILGRIM'])){
-                //this.log('hi');
+            if(r.team==this.me.team&&this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=2&&(r.unit==SPECS['PILGRIM'])&&r.signal>0){
                 this.karbFirst = r.signal>>15;
+                //this.log('k '+this.karbFirst);
                 var now = (r.signal&((1<<15)-1));
                 var turnDial = now>>12;
                 this.createdTurn = params.PILGRIM_TURN_ARRAY[turnDial];
@@ -39,18 +39,19 @@ export class Church extends Structure{
 
     processVision(){
         var visRobots = this.rc.getVisibleRobots();
-        var ids = [];
+        var ids = new Set();
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];
             if(r.unit != null && r.team==this.me.team){
-                ids.push(r.id);
+                ids.add(r.id);
                 if(r.x != null && r.unit != SPECS['CHURCH']){
-                    if(!this.lastIds.includes(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16 && this.lastObjIdx>-1){
+                    if(!this.lastIds.has(r.id) && !this.lastlastIds.has(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16 && this.lastObjIdx>-1){
                         this.objectives[this.lastObjIdx].assign(r.id,r.unit);
                     }
                 }
             }
         }
+        this.lastlastIds = this.lastIds;
         this.lastIds = ids;
         for(var i=0;i<this.objectives.length;i++){
             this.objectives[i].updateAssignees(ids);

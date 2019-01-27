@@ -14,14 +14,15 @@ export class Castle extends Structure{
         this.attacking=false;
         this.churchesStarted=0;
         this.firstOtherCastle=-1;
-        this.lastlastIds=[];
     }
 
     turn(rc){
         super.turn(rc);
         //this.log('uc '+this.unitCounts);
         this.processCastleTalk();
+        //this.log('pct');
         var obj = this.getHighestPriorityObjective();
+        //this.log('obj');
         if(params.ATTACK_NOW-this.me.turn>0&&params.ATTACK_NOW-this.me.turn<3){
             var signal=params.RANDOM_ONE;
             if(this.me.turn+1==params.ATTACK_NOW)
@@ -45,6 +46,7 @@ export class Castle extends Structure{
         }
         else{
             var build = this.buildIfShould(obj);
+            //this.log('build');
             if(build){
                 if(obj.typeStr=='BUILD_CHURCH')
                     this.churchesStarted++;
@@ -118,13 +120,13 @@ export class Castle extends Structure{
     processCastleTalk(){
         this.unitCounts = [0,0,0,0,0,0];
         var visRobots = this.rc.getVisibleRobots();
-        var ids = [];
+        var ids = new Set();
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];
             //this.log('hi1 '+r.id);
             if(r.castle_talk != null && (r.team==null || r.team==this.me.team) && !(r.castle_talk&(1<<7))){
                 //this.log('hi '+r.id);
-                ids.push(r.id);
+                ids.add(r.id);
                 var msg = r.castle_talk;
                 if(msg&(1<<6)){
                     msg-=(1<<6);
@@ -150,7 +152,7 @@ export class Castle extends Structure{
                 }
                 this.unitCounts[this.idToUnit[r.id]]++;
                 if(r.unit != null && r.unit != SPECS['CASTLE']){
-                    if(!this.lastIds.includes(r.id) && !this.lastlastIds.includes(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16){
+                    if(!this.lastIds.has(r.id) && !this.lastlastIds.has(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16){
                         //this.log('hi '+r.id);
                         this.objectives[this.lastObjIdx].assign(r.id,r.unit);
                     }
