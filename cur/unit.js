@@ -119,13 +119,15 @@ export class Unit{
     log(s){
         if(!params.DEBUG)
             return;
-        /*var t = new Date().getTime();
-        var timeTaken=0;
-        if(this.lastTime!=-1){
-            timeTaken=t-this.lastTime;
+        if(params.DEBUG_TIMING){
+            var t = new Date().getTime();
+            var timeTaken=0;
+            if(this.lastTime!=-1){
+                timeTaken=t-this.lastTime;
+            }
+            this.lastTime=t;
+            s+=' time taken since last log '+timeTaken+' ms.'
         }
-        this.lastTime=t;
-        s+=' time taken since last log '+timeTaken+' ms.'*/
         if(this.me.unit==SPECS['CASTLE'])
             this.rc.log('Round '+this.me.turn+': '+s);
         else

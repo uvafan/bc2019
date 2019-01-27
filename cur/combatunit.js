@@ -32,8 +32,8 @@ export class CombatUnit extends Robot{
                         //this.switchTurn = params.DEFENDERS_ATTACK_ROUND-currentRound;
                         target = this.getLocFromBroadcast(locb^((1<<12)+(1<<13)));
                         this.switchTurn=1001;
-                        this.log("My assigned target Location");
-                        this.log(target);
+                        this.log("My assigned target Location: "+target);
+                        this.log('my loc '+this.me.x+' '+this.me.y);
                     }
                     else{
                         target = this.getLocFromBroadcast(locb^(1<<12));
