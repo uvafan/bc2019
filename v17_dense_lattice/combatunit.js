@@ -32,8 +32,8 @@ export class CombatUnit extends Robot{
                         //this.switchTurn = params.DEFENDERS_ATTACK_ROUND-currentRound;
                         target = this.getLocFromBroadcast(locb^((1<<12)+(1<<13)));
                         this.switchTurn=1001;
-                        this.log("My assigned target Location: "+target);
-                        this.log('my loc '+this.me.x+' '+this.me.y);
+                        this.log("My assigned target Location");
+                        this.log(target);
                     }
                     else{
                         target = this.getLocFromBroadcast(locb^(1<<12));
@@ -137,7 +137,7 @@ export class CombatUnit extends Robot{
         var badSpots = [];
         for(var i=0;i<visRobots.length;i++){
             var r=visRobots[i];
-            if((r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])&&this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=2){
+            if((r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])&&this.distBtwnP(r.x,r.y,nx,ny)<=2){
                 badSpots.push(r);
             }
         }

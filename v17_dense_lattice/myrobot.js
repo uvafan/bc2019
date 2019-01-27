@@ -139,7 +139,7 @@ export class Robot extends Unit{
         var dy=0;
         for(var i=0;i<visRobots.length;i++){
             var r=visRobots[i];
-            if(r.team==this.me.team&&(r.x!=null)&&r.unit!=SPECS['PILGRIM']){
+            if(r.team==this.me.team&&r.x&&r.unit!=SPECS['PILGRIM']){
                 var d = this.distBtwnP(r.x,r.y,this.me.x,this.me.y);
                 var d2 = this.distBtwnP(toward[0],toward[1],r.x,r.y);
                 if(d<=2&&(d2==0||this.me.unit!=SPECS['PILGRIM']||this.hasChain(r.x,r.y,toward[0],toward[1]))){
@@ -153,7 +153,6 @@ export class Robot extends Unit{
         }
         if(dy||dx)
             return this.rc.give(dx,dy,this.me.karbonite,this.me.fuel);
-        //this.log('cant give');
         return null;
     }
 

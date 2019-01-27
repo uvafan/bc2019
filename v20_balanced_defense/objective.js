@@ -180,16 +180,6 @@ export class defendCastle extends Objective {
         this.spotTaken=[];
         var evenMoves = [[0,1],[0,-1],[1,0],[-1,0]];
         var firstTurn = 1;
-        var badSpots = [];
-         var visRobots = this.th.rc.getVisibleRobots();
-
-        for(var i=0;i<visRobots.length;i++){
-            var r=visRobots[i];
-            if((r.unit==SPECS['CASTLE']||r.unit==SPECS['CHURCH'])&&this.th.distBtwnP(r.x,r.y,this.th.me.x,this.th.me.y)<=2){
-                badSpots.push(r);
-            }
-        }
-
         while(q.length>0){
             var u = q.shift();
             var x=u[0];
@@ -231,17 +221,13 @@ export class defendCastle extends Objective {
                 var ny = y+evenMoves[i][1];
                 if(this.th.offMap(nx,ny)||dist[nx][ny]>-1||(!this.isCastle&&this.th.distBtwn(this.defenseLoc[0],this.defenseLoc[1],nx,ny)>100) || (nx % 2 == 1 || ny %2 == 1))
                     continue;
-                var found = false;
-                for(var j = 0; j < badSpots.length; j++){
-                    if(nx == badSpots[j][0] && ny == badSpots[j][1]){
-                        found = true;
-                        break;
-                    }
-                }
-                if(found){
+                if(this.th.distBtwnP(nx,ny,this.defenseLoc[0],this.defenseLoc[1]) <= 2){
+                    //var newLoc = [nx,ny];
+                    //this.log(newLoc);
+                    //this.log(this.defenseLoc);
+                    //this.log("THIS IS A LOCATION TOO CLOSE TO THE CASTLE");
                     continue;
                 }
-
                 dist[nx][ny] = dist[x][y]+1;
                 if(!this.th.rc.karbonite_map[ny][nx] && ! this.th.rc.fuel_map[ny][nx] && this.th.isPassable(nx,ny)){
                     var score = 0;

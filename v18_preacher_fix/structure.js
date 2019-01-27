@@ -13,8 +13,7 @@ export class Structure extends Unit{
         this.createdTurn=0;
         this.lastObjIdx = -1;
         this.objectives = [];
-        this.lastIds = new Set();
-        this.lastlastIds=new Set();
+        this.lastIds = [];
         this.enemyCastleLocs = [];
         if(this.me.unit==SPECS['CASTLE']){
             this.enemyCastleLocs.push(this.reflect(this.me.x,this.me.y));
@@ -33,7 +32,6 @@ export class Structure extends Unit{
 
     turn(rc){
         super.turn(rc);
-        //this.log('start turn');
         if(this.lastKarb==this.rc.karbonite){
             this.missingKarbTurns++;
             if(this.missingKarbTurns>10){
@@ -46,7 +44,6 @@ export class Structure extends Unit{
         }
         this.lastKarb=this.rc.karbonite;
         this.updateObjectives();
-        //this.log('obj updated');
     }
 
     buildIfShould(obj){
@@ -90,10 +87,6 @@ export class Structure extends Unit{
         var maxKarbSave = params.MIN_KARB_SAVE+myTurn*params.KARB_SAVE_ROUND_MULTIPLIER;
         var fuelSave = Math.max(maxFuelSave*(101-priority)/100,2);
         var karbSave = maxKarbSave*(101-priority)/100;
-        if(priority<8){
-            fuelSave+=(8-priority)*(8-priority)*(8-priority)*3;
-            karbSave+=(8-priority)*(8-priority)*5;
-        }
         if(this.makeStuff){
             fuelSave=params.MIN_FUEL_SAVE;
             karbSave=0;
@@ -317,7 +310,7 @@ export class Structure extends Unit{
                     newObjs.push(o);
                     cluster.push([o.target[0],o.target[1]])
                 }
-                else if(d<=params.CLUSTER_DISTANCE){
+                else if(d<=params.MINING_DISTANCE){
                     cluster.push([o.target[0],o.target[1]]);
                 }
                 else{

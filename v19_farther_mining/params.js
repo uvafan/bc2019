@@ -1,7 +1,6 @@
 import {SPECS} from 'battlecode';
 
-export var DEBUG=true;
-export var DEBUG_TIMING=false;
+export var DEBUG=false;
 
 //old defense stuff
 export var DEFENDERS_ATTACK_ROUND=10000;
@@ -16,10 +15,9 @@ export var DEF_NAV_WEIGHTS=[2,1,0];
 export var ATT_NAV_WEIGHTS=[10,1,0];
 export var PILGRIM_NAV_WEIGHTS=[10,1,0];
 
-export var STOP_PENALTY=0;
+export var STOP_PENALTY=3;
 
 export var MINING_DISTANCE=36;
-export var CLUSTER_DISTANCE=64;
 
 //fuel/karb management
 export var MIN_FUEL_SAVE=200;
@@ -29,7 +27,7 @@ export var KARB_SAVE_ROUND_MULTIPLIER=0.5;
 export var FUEL_KARB_RATIO=7;
 
 //new defense stuff
-export var LATTICE_CANDIDATES=20;
+export var LATTICE_CANDIDATES=10;
 export var ATTACK_NOW=700;
 export var MAKE_STUFF=950;
 export var USE_LATTICE=1;

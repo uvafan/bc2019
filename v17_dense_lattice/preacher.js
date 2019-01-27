@@ -65,7 +65,7 @@ export class Preacher extends CombatUnit{
         //this.log('eh '+enemiesHit+' fh '+friendliesHit);
         //if(enemiesHit<=friendliesHit)
         //    return 0;
-        return (hitScore>0?hitScore*100+dist:0);
+        return hitScore*100+dist;
     }
 
 }

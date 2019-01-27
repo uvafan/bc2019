@@ -8,7 +8,6 @@ export class Unit{
         this.churchBuilt=false;
         this.rc = rc;
         this.me = rc.me;
-        this.lastTime=-1;
         this.adjMoves = [[-1,0],[1,0],[0,-1],[0,1]];
         this.adjDiagMoves = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
         this.visRobotMap = this.rc.getVisibleRobotMap();
@@ -19,9 +18,12 @@ export class Unit{
     getClosestDial(num){
         var minD = Number.MAX_SAFE_INTEGER;
         var ret=-1;
-        for(var i=7;i>-1;i--){
-            if(params.PILGRIM_TURN_ARRAY[i]<num)
-                return i;
+        for(var i=0;i<8;i++){
+            var d=Math.abs(params.PILGRIM_TURN_ARRAY[i]-num);
+            if(d<minD){
+                minD=d;
+                ret=i;
+            }
         }
         return ret;
     }
@@ -72,7 +74,6 @@ export class Unit{
     }
 
     updateInfo(rc){
-        this.lastTime=-1;
         this.rc = rc;
         this.me = rc.me;
         this.visRobotMap = this.rc.getVisibleRobotMap();
@@ -119,15 +120,6 @@ export class Unit{
     log(s){
         if(!params.DEBUG)
             return;
-        if(params.DEBUG_TIMING){
-            var t = new Date().getTime();
-            var timeTaken=0;
-            if(this.lastTime!=-1){
-                timeTaken=t-this.lastTime;
-            }
-            this.lastTime=t;
-            s+=' time taken since last log '+timeTaken+' ms.'
-        }
         if(this.me.unit==SPECS['CASTLE'])
             this.rc.log('Round '+this.me.turn+': '+s);
         else
