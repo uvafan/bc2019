@@ -24,7 +24,7 @@ export var MIN_FUEL_SAVE=200;
 export var MIN_KARB_SAVE=50;
 export var FUEL_SAVE_ROUND_MULTIPLIER=7;
 export var KARB_SAVE_ROUND_MULTIPLIER=0.5;
-export var FUEL_KARB_RATIO=10;
+export var FUEL_KARB_RATIO=7;
 
 //new defense stuff
 export var LATTICE_CANDIDATES=10;
