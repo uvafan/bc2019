@@ -36,7 +36,7 @@ export class Robot extends Unit{
             for(var i=0;i<this.adjDiagMoves.length;i++){
                 var x=start[0]+this.adjDiagMoves[i][0];
                 var y=start[1]+this.adjDiagMoves[i][1];
-                if(this.isPassable(x,y)){
+                if(this.isWalkable(x,y)){
                     q.push([x,y]);
                 }
             }
