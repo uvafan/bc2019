@@ -43,6 +43,7 @@ export class Unit{
                 }
             }
         }
+        ret.sort(function(a,b){return (a[0]*a[0] + a[1]*a[1] - b[0]*b[0] - b[1]*b[1])});
         return ret;
     }
     getDxDyOddWithin(min,max){

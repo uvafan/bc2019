@@ -1,19 +1,20 @@
-import {SPECS} from 'battlecode'; 
+import {SPECS} from 'battlecode';
 import {Structure} from 'structure.js';
 import * as objectives from 'objective.js';
-import * as strategies from 'strategy.js'; import * as params from 'params.js'; 
+import * as strategies from 'strategy.js'; import * as params from 'params.js';
 export class Castle extends Structure{
     constructor(rc){
         super(rc);
         this.otherCastleLocsInitial = {};
         this.offset=0;
-        this.otherCastleLocs = []; 
+        this.otherCastleLocs = [];
         this.unitCounts = [0,0,0,0,0,0];
         this.idToUnit = {};
         this.idToLoc = {};
         this.attacking=false;
         this.churchesStarted=0;
         this.firstOtherCastle=-1;
+        this.lastlastIds=[];
     }
 
     turn(rc){
@@ -94,7 +95,7 @@ export class Castle extends Structure{
             var obj = this.objectives[i];
             if(obj.type>1){
                 if(obj.typeStr=='BUILD_CHURCH'){
-                    obj.distFromEnemy = this.updateDFE(obj); 
+                    obj.distFromEnemy = this.updateDFE(obj);
                 }
                 newObjs.push(obj);
             }
@@ -149,7 +150,7 @@ export class Castle extends Structure{
                 }
                 this.unitCounts[this.idToUnit[r.id]]++;
                 if(r.unit != null && r.unit != SPECS['CASTLE']){
-                    if(!this.lastIds.includes(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16){ 
+                    if(!this.lastIds.includes(r.id) && !this.lastlastIds.includes(r.id) && this.distBtwnP(r.x,r.y,this.me.x,this.me.y)<=16){
                         //this.log('hi '+r.id);
                         this.objectives[this.lastObjIdx].assign(r.id,r.unit);
                     }
@@ -157,6 +158,7 @@ export class Castle extends Structure{
             }
         }
         this.strat.updateUnitCounts(this.unitCounts);
+        this.lastlastIds = this.lastIds;
         this.lastIds = ids;
         for(var i=0;i<this.objectives.length;i++){
             this.objectives[i].updateAssignees(ids);
