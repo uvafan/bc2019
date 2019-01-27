@@ -83,6 +83,12 @@ export class Unit{
         if(this.me.turn==1){
             msg=this.me.unit;
         }
+        else if(this.me.turn%2==0&&this.me.unit==SPECS['CHURCH']){
+            msg=this.me.x;
+        }
+        else if(this.me.turn%2==1&&this.me.unit==SPECS['CHURCH']){
+            msg=this.me.y;
+        }
         else if((this.me.turn+this.offset)%2==0){
             msg=this.me.x;
         }

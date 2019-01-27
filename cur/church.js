@@ -18,7 +18,7 @@ export class Church extends Structure{
         return build;
     }
 
-    processBroadcast(){
+   processBroadcast(){
         var visRobots = this.rc.getVisibleRobots();
         for(var i=0;i<visRobots.length;i++){
             var r = visRobots[i];

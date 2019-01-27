@@ -361,13 +361,13 @@ export class buildChurch extends Objective {
         this.distFromEnemy=Math.sqrt(dfe);
         this.distFromMe=Math.sqrt(dfm);
         this.typeStr = 'BUILD_CHURCH';
-        this.built=false;
         this.type=6;
     }
 
     getPriorityStratAgnostic(karb,fuel){
         var differential = this.distFromEnemy-this.distFromMe;
-        if(this.assignees.length||this.distFromEnemy<=10||this.built)
+        var churchBuilt = this.unitCounts[SPECS['CHURCH']]>0;
+        if(this.assignees.length||this.distFromEnemy<=10||churchBuilt)
             return 0;
         var locScore = differential>-5?((55-Math.abs(differential)-this.distFromMe/3)/1.5):0
         var priorityAdd = (this.th.churchesStarted?0:10);
