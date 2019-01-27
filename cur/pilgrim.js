@@ -9,10 +9,53 @@ export class Pilgrim extends Robot{
         this.getFirstTarget();
         //this.structDists = this.runBFS(this.structLoc,true);
         this.locToMine = null;
+        this.doNothing=false;
+    }
+
+    updateDoNothing(){
+        var visRobots = this.rc.getVisibleRobots();
+        for(var i=0;i<visRobots.length;i++){
+            var r=visRobots[i];
+            if(r.x!=null && r.unit == SPECS['CHURCH'] && r.team==this.me.team){
+                if(this.distBtwnP(r.x,r.y,this.target[0],this.target[1])<=8){
+                    this.churchBuilt=true;
+                    this.doNothing=true;
+                    this.buildingChurch=false;
+                    return this.moveToDoNothingLocation();
+                }
+            }
+        }
+    }
+
+    moveToDoNothingLocation(){
+        var bestScore= Number.MIN_SAFE_INTEGER;
+        var bestMove = [0,0];
+        for(var i=0;i<this.possibleMoves.length;i++){
+            var move = this.possibleMoves[i];
+            var nx = this.me.x+move[0];
+            var ny = this.me.y+move[1];
+            var score = Number.MIN_SAFE_INTEGER;
+            if(this.isWalkable(nx,ny)&&!this.rc.karbonite_map[ny][nx]&&!this.rc.fuel_map[ny][nx]&&((nx+ny)%2==0)){
+                score = -move[0]*move[0]-move[1]*move[1];
+            }
+            if(score>bestScore){
+                bestScore=score;
+                bestMove=move;
+            }
+        }
+        return this.rc.move(bestMove[0],bestMove[1]); 
     }
 
     turn(rc){
         super.turn(rc);
+        if(this.buildingChurch){
+            var dn = this.updateDoNothing();
+            if(dn)
+                return dn;
+        }
+        if(this.doNothing){
+            return null;    
+        }
         this.karbNeeded = (this.rc.karbonite*params.FUEL_KARB_RATIO<this.rc.fuel?1:0);
         if(this.me.turn%10==5)
             this.structDists = this.runBFS(this.structLoc,true);
