@@ -35,9 +35,9 @@ export var MAKE_STUFF=930;
 export var USE_LATTICE=1;
 
 //signaling stuff
-export var RANDOM_ONE=22636;
-export var RANDOM_TWO=55580;
-export var MAKE_STUFF_SIGNAL=35782;
+export var RANDOM_ONE=39359;
+export var RANDOM_TWO=37692;
+export var MAKE_STUFF_SIGNAL=44222;
 
 //turn precision
 export var PILGRIM_TURN_ARRAY = [0,25,50,80,150,250,400,700];
