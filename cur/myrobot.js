@@ -21,9 +21,29 @@ export class Robot extends Unit{
         this.target=target;
         this.targetDists = this.runBFS(target,false);
     }
+    getUnsafeLocs(){
+        var set1 = new Set();
+        var enemies = this.rc.getVisibleRobots();
+        for(var i =0; i < enemies.length;i++){
+            var r = enemies[i];
+            if(r.x == null || r.team==this.me.team || r.unit==null)
+                continue;
+            var attack_rad = SPECS.UNITS[r.unit]['ATTACK_RADIUS'];
+            if(attack_rad == null)
+                continue;
+            var badSpots = this.getDxDyWithin(attack_rad[0], attack_rad[1]);
+            for(var j = 0; j < badSpots.length; j++){
+                var target = [r.x+badSpots[j][0],r.y+badSpots[j][1]];
+                set1.add(this.getBroadcastFromLoc(target));
 
+            }
+        }
+        return set1;
+
+    }
     runBFS(start,oneAway){
         var dist = [];
+        var unsafeLocs = this.getUnsafeLocs();
         for(var x=0;x<this.mapSize;x++){
             dist.push([]);
             for(var y=0;y<this.mapSize;y++){
@@ -36,7 +56,7 @@ export class Robot extends Unit{
             for(var i=0;i<this.adjDiagMoves.length;i++){
                 var x=start[0]+this.adjDiagMoves[i][0];
                 var y=start[1]+this.adjDiagMoves[i][1];
-                if(this.isWalkable(x,y)){
+                if(this.isWalkable(x,y) && !unsafeLocs.has(this.getBroadcastFromLoc([x,y]))){
                     q.push([x,y]);
                 }
             }
@@ -68,7 +88,7 @@ export class Robot extends Unit{
                     stop=true;
                     break;
                 }
-                if(!this.isWalkable(nx,ny)||dist[nx][ny]<=dist[x][y]+1)
+                if(!this.isWalkable(nx,ny)|| unsafeLocs.has(this.getBroadcastFromLoc([x,y])) ||dist[nx][ny]<=dist[x][y]+1)
                     continue;
                 dist[nx][ny]=dist[x][y]+1;
                 q.push([nx,ny]);
@@ -78,6 +98,8 @@ export class Robot extends Unit{
         }
         return dist;
     }
+
+
 
     //weights: [movement,fuel efficiency,splash resistance]
     navTo(dists,dest,weights,safe,standOn){

@@ -1,4 +1,4 @@
-import {SPECS} from 'battlecode'; 
+import {SPECS} from 'battlecode';
 import {Robot} from 'myrobot.js';
 import * as params from 'params.js';
 
@@ -13,7 +13,7 @@ export class Pilgrim extends Robot{
 
     turn(rc){
         super.turn(rc);
-        this.karbNeeded = (this.rc.karbonite*params.FUEL_KARB_RATIO<this.rc.fuel?1:0); 
+        this.karbNeeded = (this.rc.karbonite*params.FUEL_KARB_RATIO<this.rc.fuel?1:0);
         if(this.me.turn%10==5)
             this.structDists = this.runBFS(this.structLoc,true);
         if(this.buildingChurch){
@@ -33,7 +33,7 @@ export class Pilgrim extends Robot{
                 }
                 else{
                     if(!this.locToMine||this.isPartiallyFull()){
-                        this.locToMine = this.getWaitingMiningLoc(); 
+                        this.locToMine = this.getWaitingMiningLoc();
                         if(this.locToMine)
                             this.mineDists = this.runBFS(this.locToMine,false);
                     }
@@ -83,8 +83,8 @@ export class Pilgrim extends Robot{
         var dial = this.getClosestDial(this.me.turn+this.createdTurn);
         var cast = this.getBroadcastFromLoc(this.structLoc)+(this.karbNeeded<<15)+(dial<<12);
         for(var i=0;i<this.adjDiagMoves.length;i++){
-            var nx=this.me.x+this.adjDiagMoves[i][0]; 
-            var ny=this.me.y+this.adjDiagMoves[i][1]; 
+            var nx=this.me.x+this.adjDiagMoves[i][0];
+            var ny=this.me.y+this.adjDiagMoves[i][1];
             if(this.isWalkable(nx,ny)&&this.distBtwnP(nx,ny,this.target[0],this.target[1])<minDist&&!this.rc.karbonite_map[ny][nx]&&!this.rc.fuel_map[ny][nx]){
                 this.structLoc = [nx,ny];
                 minDist=this.distBtwnP(nx,ny,this.target[0],this.target[1]);
@@ -168,7 +168,9 @@ export class Pilgrim extends Robot{
                 //this.log(locb);
                 this.structLoc = [r.x,r.y];
                 this.eloc = this.reflect(r.x,r.y);
-                this.updateTarget(this.getLocFromBroadcast(locb));                
+                var target = this.getLocFromBroadcast(locb);
+                this.log('my target is '+target+' from broadcast '+locb);
+                this.updateTarget(this.getLocFromBroadcast(locb));
                 if(!this.rc.karbonite_map[this.target[1]][this.target[0]]&&!this.rc.fuel_map[this.target[1]][this.target[0]]/*this.distBtwnP(this.structLoc[0],this.structLoc[1],this.target[0],this.target[1])>params.MINING_DISTANCE*/){
                     this.buildingChurch=true;
                 }
