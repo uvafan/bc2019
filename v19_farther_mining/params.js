@@ -1,6 +1,6 @@
 import {SPECS} from 'battlecode';
 
-export var DEBUG=true;
+export var DEBUG=false;
 
 //old defense stuff
 export var DEFENDERS_ATTACK_ROUND=10000;
