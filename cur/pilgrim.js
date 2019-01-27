@@ -17,15 +17,17 @@ export class Pilgrim extends Robot{
         if(this.me.turn%10==0)
             this.structDists = this.runBFS(this.structLoc,true);
         if(this.buildingChurch){
+            //this.log('trying to bc at '+this.target);
             var distToT = this.distBtwnP(this.target[0],this.target[1],this.me.x,this.me.y);
             if(distToT<=2){
                 if(this.shouldBuildChurch()){
-                    this.buildingChurch=false;
                     var build = this.buildChurch();
                     var locToMine = this.getFirstMiningLoc();
                     this.updateTarget(locToMine);
-                    if(build)
+                    if(build){
                         this.churchBuilt=true;
+                        this.buildingChurch=false;
+                    }
                     return build;
                 }
                 else{
