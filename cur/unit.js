@@ -14,6 +14,8 @@ export class Unit{
         this.visRobotMap = this.rc.getVisibleRobotMap();
         this.attackRadius = SPECS.UNITS[this.me.unit]['ATTACK_RADIUS'];
         this.attackCost = SPECS.UNITS[this.me.unit]['ATTACK_FUEL_COST'];
+        this.turnsBeforeBFS = 10;
+        this.ranBFS = 0;
     }
 
     getClosestDial(num){

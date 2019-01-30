@@ -13,7 +13,7 @@ export class Robot extends Unit{
 
     turn(rc){
         super.turn(rc);
-        if(this.me.turn%10==0&&this.target){
+        if((this.me.turn >= this.ranBFS + this.turnsBeforeBFS) && this.target){
             this.updateTarget(this.target);
         }
     }
@@ -43,6 +43,7 @@ export class Robot extends Unit{
 
     }
     runBFS(start,oneAway){
+        this.ranBFS = this.me.turn;
         var dist = [];
         var unsafeLocs = this.getUnsafeLocs();
         for(var x=0;x<this.mapSize;x++){
@@ -86,6 +87,7 @@ export class Robot extends Unit{
                 var ny = y+move[1];
                 if(nx==this.me.x&&ny==this.me.y){
                     dist[nx][ny]=dist[x][y]+1;
+                    this.turnsBeforeBFS = Math.min(Math.max(10,dist[nx][ny]),50);
                     stop=true;
                     break;
                 }

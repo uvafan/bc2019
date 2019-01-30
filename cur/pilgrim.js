@@ -43,7 +43,7 @@ export class Pilgrim extends Robot{
                 bestMove=move;
             }
         }
-        return this.rc.move(bestMove[0],bestMove[1]); 
+        return this.rc.move(bestMove[0],bestMove[1]);
     }
 
     updateChurchLoc(){
@@ -67,11 +67,12 @@ export class Pilgrim extends Robot{
                 return dn;
         }
         if(this.doNothing){
-            return null;    
+            return null;
         }
         this.karbNeeded = (this.rc.karbonite*params.FUEL_KARB_RATIO<this.rc.fuel?1:0);
-        if(this.me.turn%10==5)
+        if(this.me.turn%10 == 5){
             this.structDists = this.runBFS(this.structLoc,true);
+        }
         if(this.buildingChurch){
             if(!this.isSafe(this.target[0],this.target[1])&&!this.updated)
                 this.updateChurchLoc();
@@ -92,8 +93,9 @@ export class Pilgrim extends Robot{
                 else{
                     if(!this.locToMine||this.isPartiallyFull()){
                         this.locToMine = this.getWaitingMiningLoc();
-                        if(this.locToMine)
+                        if(this.locToMine){
                             this.mineDists = this.runBFS(this.locToMine,false);
+                        }
                     }
                     if(this.locToMine&&this.rc.fuel>0&&this.locsEqual(this.locToMine,[this.me.x,this.me.y])&&!this.isFullyFull()){
                         return this.rc.mine();
