@@ -173,17 +173,14 @@ export class EcoDefense extends Strategy {
                 }
                 //if(minDist<26&&this.th.rc.karbonite<30)
                     //return SPECS['CRUSADER'];
-                if(obj.unitCounts[SPECS['PREACHER']]>1&&enemyUnit==SPECS['PILGRIM']){
-                    return SPECS['PROPHET'];
-                }
-                if((minDist<26)||(minDist<50&&(enemyUnit==SPECS['PREACHER']||enemyUnit==SPECS['CRUSADER']))){
+                if(minDist<26||(minDist<50&&(enemyUnit==SPECS['PREACHER']||enemyUnit==SPECS['CRUSADER']))){
                     return SPECS['PREACHER'];
                 }
                 if((enemyUnit==SPECS['PREACHER']||enemyUnit==SPECS['CRUSADER'])&&obj.unitCounts[SPECS['PREACHER']]==0){
                     return SPECS['PREACHER'];
                 }
             }
-            if(this.th.makeStuff&&enemiesInSight.length==0){
+            if(this.th.makeStuff){
                 return SPECS['CRUSADER'];
             }
             return SPECS['PROPHET'];
