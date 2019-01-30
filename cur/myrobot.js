@@ -42,6 +42,7 @@ export class Robot extends Unit{
         return set1;
 
     }
+
     runBFS(start,oneAway){
         var dist = [];
         var unsafeLocs = this.getUnsafeLocs();
