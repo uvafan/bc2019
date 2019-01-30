@@ -1,6 +1,6 @@
 import {SPECS} from 'battlecode';
 
-export var DEBUG=true;
+export var DEBUG=false;
 export var DEBUG_TIMING=false;
 
 //old defense stuff

@@ -5,6 +5,7 @@ import * as params from 'params.js';
 export class Pilgrim extends Robot{
     constructor(rc){
         super(rc);
+        this.buildingChurch=false;
         this.getFirstTarget();
         //this.structDists = this.runBFS(this.structLoc,true);
         this.locToMine = null;

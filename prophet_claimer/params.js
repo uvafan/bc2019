@@ -1,6 +1,6 @@
 import {SPECS} from 'battlecode';
 
-export var DEBUG=true;
+export var DEBUG=false;
 export var DEBUG_TIMING=false;
 
 //old defense stuff
@@ -48,4 +48,4 @@ export var PILGRIM_TURN_ARRAY = [0,25,50,80,150,250,400,700];
 //attacking priorities: [CASTLE,CHURCH,PILGRIM,CRUSADER,PROPHET,PREACHER]
 export var ATTACK_PRIORITIES = [1,1,1.5,3,3,5];
 
-export var CLAIM_UNIT = SPECS['CRUSADER'];
+export var CLAIM_UNIT = SPECS['PROPHET'];

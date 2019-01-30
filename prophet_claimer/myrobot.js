@@ -7,7 +7,6 @@ export class Robot extends Unit{
         super(rc);
         this.possibleMoves = this.getDxDyWithin(0,SPECS.UNITS[this.me.unit]['SPEED']);
         this.fuelPerMove = SPECS.UNITS[this.me.unit]['FUEL_PER_MOVE'];
-        this.buildingChurch=false;
         this.splash = this.getDxDyWithin(0,2);
     }
 
@@ -20,7 +19,7 @@ export class Robot extends Unit{
 
     updateTarget(target){
         this.target=target;
-        this.targetDists = this.runBFS(target,this.buildingChurch);
+        this.targetDists = this.runBFS(target,false);
     }
     getUnsafeLocs(){
         var set1 = new Set();
