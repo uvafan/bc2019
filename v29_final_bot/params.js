@@ -1,6 +1,6 @@
 import {SPECS} from 'battlecode';
 
-export var DEBUG=true;
+export var DEBUG=false;
 export var DEBUG_TIMING=false;
 
 //old defense stuff
@@ -39,14 +39,14 @@ export var NUM_ROUNDS=1000;
 export var USE_LATTICE=1;
 
 //signaling stuff
-export var RANDOM_ONE=29068;
-export var RANDOM_TWO=49073;
-export var MAKE_STUFF_SIGNAL=44143;
+export var RANDOM_ONE=43354;
+export var RANDOM_TWO=40982;
+export var MAKE_STUFF_SIGNAL=43743;
 
 //turn precision
 export var PILGRIM_TURN_ARRAY = [0,25,50,80,150,250,400,700];
 
 //attacking priorities: [CASTLE,CHURCH,PILGRIM,CRUSADER,PROPHET,PREACHER]
-export var ATTACK_PRIORITIES = [1,1.25,1,3,3,5];
+export var ATTACK_PRIORITIES = [1,1.25,1,3,4,5];
 
 export var CLAIM_UNIT = SPECS['CRUSADER'];
